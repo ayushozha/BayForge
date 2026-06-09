@@ -1,0 +1,8 @@
+.env
+.env.local
+node_modules/
+npm-debug.log*
+server.*.log
+bayforge-*.png
+.playwright-mcp/
+.DS_Store
