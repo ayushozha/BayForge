@@ -1,13 +1,25 @@
 {
   "name": "bayforge-landing",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Bay Forge landing hero with waitlist signup proxy.",
+  "description": "Bay Forge landing page with waitlist signup proxy, built with Next.js.",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20.9"
+  },
+  "dependencies": {
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.2",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
   }
 }
