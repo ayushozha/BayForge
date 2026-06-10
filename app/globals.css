@@ -944,7 +944,7 @@ h1 span {
   overflow: hidden;
   background:
     linear-gradient(90deg, rgba(40, 8, 80, 0.96), rgba(122, 47, 224, 0.85)),
-    url("assets/2.png") center 58% / cover;
+    url("/assets/2.png") center 58% / cover;
 }
 
 .newsletter-section::after {
