@@ -162,48 +162,95 @@ svg {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
 .button {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  min-height: 42px;
-  border-radius: 7px;
-  padding: 0 18px;
+  gap: 8px;
+  min-height: 40px;
+  border-radius: 8px;
+  padding: 0 16px;
   border: 1px solid transparent;
   color: #fff;
-  font-weight: 800;
+  font-size: 0.88rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
+  outline: none;
   transition:
     transform 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    color 160ms ease;
 }
 
-.button:hover,
-.button:focus-visible {
+.button:hover {
   transform: translateY(-1px);
 }
 
+.button:active {
+  transform: translateY(0);
+}
+
+.button:focus-visible {
+  border-color: rgba(238, 211, 255, 0.72);
+  box-shadow:
+    0 0 0 3px rgba(185, 54, 255, 0.28),
+    0 0 0 1px rgba(255, 255, 255, 0.16) inset;
+}
+
 .button svg {
-  width: 20px;
-  height: 20px;
+  width: 17px;
+  height: 17px;
   fill: currentColor;
+  flex: 0 0 auto;
 }
 
 .button-primary {
-  background: linear-gradient(135deg, var(--violet), var(--violet-strong) 55%, var(--magenta));
-  box-shadow: 0 0 24px rgba(185, 54, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 46%),
+    linear-gradient(135deg, #bd4cff 0%, var(--violet-strong) 58%, #ec35dc 100%);
+  box-shadow:
+    0 10px 28px rgba(185, 54, 255, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 1px 0 rgba(255, 255, 255, 0.28) inset;
+}
+
+.button-primary:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 14px 34px rgba(185, 54, 255, 0.42),
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset,
+    0 1px 0 rgba(255, 255, 255, 0.36) inset;
 }
 
 .button-secondary {
-  background: rgba(22, 10, 44, 0.72);
-  border-color: rgba(185, 54, 255, 0.55);
-  box-shadow: inset 0 0 0 1px rgba(185, 54, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+    rgba(5, 6, 17, 0.52);
+  color: rgba(250, 247, 255, 0.92);
+  box-shadow:
+    0 8px 24px rgba(2, 3, 10, 0.26),
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+  backdrop-filter: blur(14px);
+}
+
+.button-secondary:hover {
+  border-color: rgba(185, 54, 255, 0.52);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.03)),
+    rgba(28, 10, 52, 0.58);
+  color: #fff;
 }
 
 .hero {
