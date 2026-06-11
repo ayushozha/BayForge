@@ -732,6 +732,33 @@ h1 span {
   gap: 18px;
 }
 
+.event-grid-empty {
+  grid-template-columns: 1fr;
+}
+
+.event-empty {
+  min-height: 238px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(125, 54, 238, 0.22);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(26, 10, 59, 0.96), rgba(50, 16, 110, 0.9)),
+    #140a27;
+  color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 18px 44px rgba(36, 13, 70, 0.18);
+}
+
+.event-empty p {
+  margin: 0;
+  padding: 0 18px;
+  color: inherit;
+  font-size: 0.96rem;
+  font-weight: 800;
+  text-align: center;
+}
+
 .event-card {
   position: relative;
   min-height: 238px;

@@ -11,5 +11,6 @@ bayforge-*.png
 .playwright-mcp/
 data/community-emails.*
 data/community-database-export.*
+data/community-events-export.*
 uploads/
 .DS_Store
