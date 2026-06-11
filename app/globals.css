@@ -1026,11 +1026,46 @@ h1 span {
   margin-top: 14px;
 }
 
-.partner-logos span {
+.partner-logo {
+  min-width: 0;
+  display: grid;
+  place-items: center;
+  min-height: 38px;
   color: #34303f;
+}
+
+.partner-logo[href] {
+  transition:
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.partner-logo[href]:hover {
+  color: #7d36ee;
+  transform: translateY(-1px);
+}
+
+.partner-logo span {
+  color: inherit;
   font-size: 1.1rem;
   font-weight: 900;
   text-align: center;
+}
+
+.partner-logo-image {
+  max-width: 112px;
+  max-height: 32px;
+  object-fit: contain;
+}
+
+.partner-empty {
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  margin-top: 14px;
+  color: #5f5870;
+  font-size: 0.92rem;
+  font-weight: 800;
 }
 
 .newsletter-section {
@@ -1339,7 +1374,7 @@ h1 span {
     gap: 16px;
   }
 
-  .partner-logos span {
+  .partner-logo span {
     font-size: 0.98rem;
   }
 }
@@ -1651,7 +1686,11 @@ h1 span {
     padding: 18px;
   }
 
-  .partner-logos span {
+  .partner-logo {
+    justify-items: start;
+  }
+
+  .partner-logo span {
     text-align: left;
   }
 
