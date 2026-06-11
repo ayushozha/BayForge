@@ -91,11 +91,9 @@ svg {
   width: 58px;
   height: 58px;
   flex: 0 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: 12px;
-  background: #fff;
-  object-fit: contain;
-  box-shadow: 0 0 18px rgba(185, 54, 255, 0.42);
+  border-radius: 13px;
+  color: #fff;
+  filter: drop-shadow(0 0 14px rgba(185, 54, 255, 0.38));
 }
 
 .brand-mark {
