@@ -1,5 +1,4 @@
-import Image from "next/image";
-import logo from "@/public/assets/7.png";
+import BrandSymbol from "./BrandSymbol";
 
 export default function SiteFooter() {
   return (
@@ -7,7 +6,7 @@ export default function SiteFooter() {
       <div className="section-shell footer-grid">
         <div className="footer-brand">
           <a className="brand" href="/" aria-label="Bay Forge home">
-            <Image className="brand-logo" src={logo} alt="" width={42} height={42} />
+            <BrandSymbol className="brand-logo" idPrefix="footer-brand" />
             <span className="brand-name">Bay Forge</span>
           </a>
           <p>
