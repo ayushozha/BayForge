@@ -208,6 +208,7 @@ svg {
   position: relative;
   display: grid;
   align-items: center;
+  align-content: center;
   min-height: 94svh;
   padding: 172px 56px 116px;
   isolation: isolate;
