@@ -10,9 +10,19 @@ type Status = {
   tone: StatusTone;
 };
 
-function useSubscribe(source: string, initialMessage: string) {
+type SubscribeMessages = {
+  initial: string;
+  submitting?: string;
+  invalidEmail?: string;
+  success?: string;
+  duplicate?: string;
+  genericError?: string;
+  networkError?: string;
+};
+
+function useSubscribe(source: string, messages: SubscribeMessages) {
   const { applyTotal } = useCommunityCount();
-  const [status, setStatus] = useState<Status>({ message: initialMessage, tone: "neutral" });
+  const [status, setStatus] = useState<Status>({ message: messages.initial, tone: "neutral" });
   const [submitting, setSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -22,13 +32,16 @@ function useSubscribe(source: string, initialMessage: string) {
     const email = emailInput.value.trim();
 
     if (!emailInput.checkValidity()) {
-      setStatus({ message: "Please enter a valid email address.", tone: "error" });
+      setStatus({
+        message: messages.invalidEmail ?? "Please enter a valid email address.",
+        tone: "error",
+      });
       emailInput.focus();
       return;
     }
 
     setSubmitting(true);
-    setStatus({ message: "Adding you to the Bay Forge list.", tone: "neutral" });
+    setStatus({ message: messages.submitting ?? "Adding you to the Bay Forge list.", tone: "neutral" });
 
     try {
       const response = await fetch("/api/subscribe", {
@@ -50,20 +63,26 @@ function useSubscribe(source: string, initialMessage: string) {
         form.reset();
         applyTotal(typeof data.total === "number" ? data.total : null, 1);
         setStatus({
-          message: "Thank you for signing up. We'll send the next Bay Forge drop soon.",
+          message: messages.success ?? "Thank you for signing up. We'll send the next Bay Forge drop soon.",
           tone: "success",
         });
         return;
       }
 
       if (response.status === 409) {
-        setStatus({ message: "You're already signed up. We'll keep you posted.", tone: "success" });
+        setStatus({
+          message: messages.duplicate ?? "You're already signed up. We'll keep you posted.",
+          tone: "success",
+        });
         return;
       }
 
-      setStatus({ message: data.error || "Signup failed. Please try again.", tone: "error" });
+      setStatus({ message: data.error || messages.genericError || "Signup failed. Please try again.", tone: "error" });
     } catch {
-      setStatus({ message: "Network issue. Please try again in a moment.", tone: "error" });
+      setStatus({
+        message: messages.networkError ?? "Network issue. Please try again in a moment.",
+        tone: "error",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -79,7 +98,9 @@ function statusClassName(base: string, tone: StatusTone) {
 export function HeroSubscribeForm() {
   const { status, submitting, handleSubmit } = useSubscribe(
     "landing-hero",
-    "Be the first to know about hackathons, workshops, and community events.",
+    {
+      initial: "Be the first to know about hackathons, workshops, and community events.",
+    },
   );
 
   return (
@@ -114,16 +135,32 @@ export function HeroSubscribeForm() {
   );
 }
 
-export function NewsletterSubscribeForm() {
-  const { status, submitting, handleSubmit } = useSubscribe(
-    "footer-newsletter",
-    "No spam. Unsubscribe anytime.",
-  );
+type NewsletterSubscribeFormProps = {
+  emailLabel: string;
+  placeholder: string;
+  buttonLabel: string;
+  submittingLabel: string;
+  helperText: string;
+  source: string;
+};
+
+export function NewsletterSubscribeForm({
+  emailLabel,
+  placeholder,
+  buttonLabel,
+  submittingLabel,
+  helperText,
+  source,
+}: NewsletterSubscribeFormProps) {
+  const { status, submitting, handleSubmit } = useSubscribe(source, {
+    initial: helperText,
+    submitting: submittingLabel,
+  });
 
   return (
     <form className="mini-subscribe-form" noValidate onSubmit={handleSubmit}>
       <label className="sr-only" htmlFor="footerEmail">
-        Email address
+        {emailLabel}
       </label>
       <input
         id="footerEmail"
@@ -131,15 +168,15 @@ export function NewsletterSubscribeForm() {
         type="email"
         inputMode="email"
         autoComplete="email"
-        placeholder="you@example.com"
+        placeholder={placeholder}
         required
       />
       <button className="button button-primary" type="submit" disabled={submitting}>
         {submitting ? (
-          "Joining..."
+          submittingLabel
         ) : (
           <>
-            Get Event Updates
+            {buttonLabel}
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M13.3 5.3 20 12l-6.7 6.7-1.4-1.4 4.3-4.3H4v-2h12.2l-4.3-4.3 1.4-1.4Z" />
             </svg>

@@ -1157,6 +1157,16 @@ h1 span {
   font-weight: 750;
 }
 
+.newsletter-empty {
+  grid-column: 1 / -1;
+  min-height: 96px;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1rem;
+  font-weight: 850;
+}
+
 .site-footer {
   padding: 36px 0 22px;
   background:

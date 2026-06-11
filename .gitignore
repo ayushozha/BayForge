@@ -12,6 +12,7 @@ bayforge-*.png
 data/community-emails.*
 data/community-database-export.*
 data/community-events-export.*
+data/community-newsletter-export.*
 data/community-sponsors-export.*
 uploads/
 .DS_Store
