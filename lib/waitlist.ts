@@ -47,6 +47,33 @@ const COLLEGE_COUNT_KEYS = new Set([
   "institutioncount",
   "institutionsrepresented",
 ]);
+const PROJECT_FIELD_KEYS = new Set([
+  "project",
+  "projectid",
+  "projectname",
+  "projecttitle",
+  "repo",
+  "repository",
+  "repositoryurl",
+  "submission",
+  "submissionid",
+  "build",
+  "buildid",
+]);
+const PROJECT_COUNT_KEYS = new Set([
+  "projects",
+  "project",
+  "projectcount",
+  "projectsbuilt",
+  "projectscreated",
+  "projectsshipped",
+  "builtprojects",
+  "shippedprojects",
+  "submissions",
+  "submissioncount",
+  "builds",
+  "buildcount",
+]);
 const COUNT_VALUE_KEYS = ["count", "total", "value"];
 
 type CommunityStatsSource = "email-waitlist" | "email-list" | "database-export";
@@ -56,6 +83,8 @@ type CommunityStats = {
   total: number | null;
   collegesRepresented: number | null;
   collegesSource?: CommunityStatsSource | null;
+  projectsBuilt: number | null;
+  projectsSource?: CommunityStatsSource | null;
   today?: unknown;
   this_week?: unknown;
   this_month?: unknown;
@@ -64,6 +93,7 @@ type CommunityStats = {
 type ParsedCommunityDataFile = {
   emails: Set<string>;
   collegesRepresented: number | null;
+  projectsBuilt: number | null;
 };
 
 export function isEmail(value: string): boolean {
@@ -119,6 +149,29 @@ function cleanCollegeName(value: unknown): string | null {
   return normalized;
 }
 
+function cleanProjectIdentifier(value: unknown): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const cleaned = value.trim().replace(/^["']|["']$/g, "").replace(/\s+/g, " ");
+  const normalized = cleaned.toLowerCase();
+
+  if (
+    !cleaned ||
+    normalized === "n/a" ||
+    normalized === "na" ||
+    normalized === "none" ||
+    normalized === "unknown" ||
+    normalized === "null" ||
+    normalized === "undefined"
+  ) {
+    return null;
+  }
+
+  return normalized;
+}
+
 function addCollegeValue(value: unknown, colleges: Set<string>) {
   if (typeof value === "string") {
     const college = cleanCollegeName(value);
@@ -151,6 +204,47 @@ function addCollegeValue(value: unknown, colleges: Set<string>) {
   }
 }
 
+function addProjectValue(value: unknown, projects: Set<string>) {
+  if (typeof value === "string") {
+    const project = cleanProjectIdentifier(value);
+    if (project) {
+      projects.add(project);
+    }
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    value.forEach(item => addProjectValue(item, projects));
+    return;
+  }
+
+  if (!isRecord(value)) {
+    return;
+  }
+
+  const namedValue =
+    value.id ||
+    value.slug ||
+    value.name ||
+    value.title ||
+    value.label ||
+    value.url ||
+    value.repositoryUrl ||
+    value.value;
+
+  if (typeof namedValue === "string") {
+    addProjectValue(namedValue, projects);
+    return;
+  }
+
+  for (const key of Object.keys(value)) {
+    const project = cleanProjectIdentifier(key);
+    if (project) {
+      projects.add(project);
+    }
+  }
+}
+
 function collectCollegeNamesFromJson(value: unknown, colleges: Set<string>, depth = 0) {
   if (depth > 5) {
     return;
@@ -170,6 +264,29 @@ function collectCollegeNamesFromJson(value: unknown, colleges: Set<string>, dept
       addCollegeValue(fieldValue, colleges);
     } else {
       collectCollegeNamesFromJson(fieldValue, colleges, depth + 1);
+    }
+  }
+}
+
+function collectProjectIdentifiersFromJson(value: unknown, projects: Set<string>, depth = 0) {
+  if (depth > 5) {
+    return;
+  }
+
+  if (Array.isArray(value)) {
+    value.forEach(item => collectProjectIdentifiersFromJson(item, projects, depth + 1));
+    return;
+  }
+
+  if (!isRecord(value)) {
+    return;
+  }
+
+  for (const [key, fieldValue] of Object.entries(value)) {
+    if (PROJECT_FIELD_KEYS.has(normalizeKey(key))) {
+      addProjectValue(fieldValue, projects);
+    } else {
+      collectProjectIdentifiersFromJson(fieldValue, projects, depth + 1);
     }
   }
 }
@@ -322,6 +439,37 @@ function getDelimitedCollegeCount(file: string): number | null {
   return colleges.size > 0 ? colleges.size : null;
 }
 
+function getDelimitedProjectCount(file: string): number | null {
+  const lines = file
+    .split(/\r?\n/)
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  if (lines.length < 2) {
+    return null;
+  }
+
+  const delimiter = detectDelimiter(lines[0]);
+  const headers = parseDelimitedLine(lines[0], delimiter);
+  const projectIndexes = headers
+    .map((header, index) => (PROJECT_FIELD_KEYS.has(normalizeKey(header)) ? index : -1))
+    .filter(index => index >= 0);
+
+  if (projectIndexes.length === 0) {
+    return null;
+  }
+
+  const projects = new Set<string>();
+  for (const line of lines.slice(1)) {
+    const cells = parseDelimitedLine(line, delimiter);
+    for (const index of projectIndexes) {
+      addProjectValue(cells[index], projects);
+    }
+  }
+
+  return projects.size > 0 ? projects.size : null;
+}
+
 function parseCommunityDataFile(file: string): ParsedCommunityDataFile {
   const emails = new Set(
     Array.from(file.matchAll(EMAIL_PATTERN), match => match[0].toLowerCase()),
@@ -330,17 +478,21 @@ function parseCommunityDataFile(file: string): ParsedCommunityDataFile {
   try {
     const json = JSON.parse(file) as unknown;
     const colleges = new Set<string>();
+    const projects = new Set<string>();
     collectCollegeNamesFromJson(json, colleges);
+    collectProjectIdentifiersFromJson(json, projects);
 
     return {
       emails,
       collegesRepresented:
         colleges.size > 0 ? colleges.size : findCountByKey(json, COLLEGE_COUNT_KEYS),
+      projectsBuilt: projects.size > 0 ? projects.size : findCountByKey(json, PROJECT_COUNT_KEYS),
     };
   } catch {
     return {
       emails,
       collegesRepresented: getDelimitedCollegeCount(file),
+      projectsBuilt: getDelimitedProjectCount(file),
     };
   }
 }
@@ -379,11 +531,14 @@ async function getWaitlistCommunityStats(): Promise<CommunityStats> {
 
   const stats = await upstream.json();
   const collegesRepresented = findCountByKey(stats, COLLEGE_COUNT_KEYS);
+  const projectsBuilt = findCountByKey(stats, PROJECT_COUNT_KEYS);
   return {
     source: "email-waitlist" as const,
     total: isRecord(stats) ? toNonNegativeInteger(stats.total) : null,
     collegesRepresented,
     collegesSource: collegesRepresented !== null ? "email-waitlist" as const : null,
+    projectsBuilt,
+    projectsSource: projectsBuilt !== null ? "email-waitlist" as const : null,
     today: isRecord(stats) ? stats.today : undefined,
     this_week: isRecord(stats) ? stats.this_week : undefined,
     this_month: isRecord(stats) ? stats.this_month : undefined,
@@ -414,8 +569,10 @@ export async function getUploadedEmailListStats(): Promise<CommunityStats | null
 
   const emails = new Set<string>();
   let collegesRepresented: number | null = null;
+  let projectsBuilt: number | null = null;
   let source: CommunityStatsSource = "email-list";
   let collegesSource: CommunityStatsSource | null = null;
+  let projectsSource: CommunityStatsSource | null = null;
 
   for (const configuredFile of configuredFiles) {
     if (!configuredFile) {
@@ -436,6 +593,11 @@ export async function getUploadedEmailListStats(): Promise<CommunityStats | null
       collegesRepresented = Math.max(collegesRepresented ?? 0, parsedFile.collegesRepresented);
       collegesSource = configuredFile.source;
     }
+
+    if (parsedFile.projectsBuilt !== null) {
+      projectsBuilt = Math.max(projectsBuilt ?? 0, parsedFile.projectsBuilt);
+      projectsSource = configuredFile.source;
+    }
   }
 
   return {
@@ -443,11 +605,17 @@ export async function getUploadedEmailListStats(): Promise<CommunityStats | null
     total: emails.size > 0 ? emails.size : null,
     collegesRepresented,
     collegesSource,
+    projectsBuilt,
+    projectsSource,
   };
 }
 
 function hasCommunityStats(stats: CommunityStats): boolean {
-  return typeof stats.total === "number" || typeof stats.collegesRepresented === "number";
+  return (
+    typeof stats.total === "number" ||
+    typeof stats.collegesRepresented === "number" ||
+    typeof stats.projectsBuilt === "number"
+  );
 }
 
 export async function getCommunityStats(): Promise<CommunityStats> {
@@ -467,6 +635,8 @@ export async function getCommunityStats(): Promise<CommunityStats> {
     collegesRepresented:
       waitlistStats?.collegesRepresented ?? uploadedListStats?.collegesRepresented ?? null,
     collegesSource: waitlistStats?.collegesSource ?? uploadedListStats?.collegesSource ?? null,
+    projectsBuilt: waitlistStats?.projectsBuilt ?? uploadedListStats?.projectsBuilt ?? null,
+    projectsSource: waitlistStats?.projectsSource ?? uploadedListStats?.projectsSource ?? null,
     today: waitlistStats?.today,
     this_week: waitlistStats?.this_week,
     this_month: waitlistStats?.this_month,
@@ -481,5 +651,7 @@ export async function getCommunityStats(): Promise<CommunityStats> {
     total: null,
     collegesRepresented: null,
     collegesSource: null,
+    projectsBuilt: null,
+    projectsSource: null,
   };
 }

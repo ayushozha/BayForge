@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 type CommunityCountContextValue = {
   label: string;
   collegesLabel: string;
+  projectsLabel: string;
   applyTotal: (total: number | null, increment: number) => void;
 };
 
@@ -13,6 +14,7 @@ const CommunityCountContext = createContext<CommunityCountContextValue | null>(n
 export function CommunityCountProvider({ children }: { children: React.ReactNode }) {
   const [count, setCount] = useState<number | null>(null);
   const [collegesRepresented, setCollegesRepresented] = useState<number | null>(null);
+  const [projectsBuilt, setProjectsBuilt] = useState<number | null>(null);
 
   const applyTotal = useCallback((total: number | null, increment: number) => {
     setCount(current => {
@@ -42,6 +44,10 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
         if (!cancelled && typeof data.collegesRepresented === "number") {
           setCollegesRepresented(Math.round(data.collegesRepresented));
         }
+
+        if (!cancelled && typeof data.projectsBuilt === "number") {
+          setProjectsBuilt(Math.round(data.projectsBuilt));
+        }
       })
       .catch(() => {
         // Keep the design fallback when stats are unavailable.
@@ -55,9 +61,10 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
   const label = count === null ? "..." : count.toLocaleString("en-US");
   const collegesLabel =
     collegesRepresented === null ? "..." : collegesRepresented.toLocaleString("en-US");
+  const projectsLabel = projectsBuilt === null ? "..." : projectsBuilt.toLocaleString("en-US");
 
   return (
-    <CommunityCountContext.Provider value={{ label, collegesLabel, applyTotal }}>
+    <CommunityCountContext.Provider value={{ label, collegesLabel, projectsLabel, applyTotal }}>
       {children}
     </CommunityCountContext.Provider>
   );

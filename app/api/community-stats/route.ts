@@ -8,7 +8,8 @@ export async function GET() {
     const stats = await getCommunityStats();
     if (
       typeof stats.total !== "number" &&
-      typeof stats.collegesRepresented !== "number"
+      typeof stats.collegesRepresented !== "number" &&
+      typeof stats.projectsBuilt !== "number"
     ) {
       return NextResponse.json({
         configured: false,
@@ -16,6 +17,8 @@ export async function GET() {
         total: null,
         collegesRepresented: null,
         collegesSource: null,
+        projectsBuilt: null,
+        projectsSource: null,
         error:
           "Set WAITLIST_API_KEY, COMMUNITY_EMAIL_LIST_PATH, or COMMUNITY_DATABASE_EXPORT_PATH on the server.",
       });
@@ -27,6 +30,8 @@ export async function GET() {
       total: stats.total,
       collegesRepresented: stats.collegesRepresented,
       collegesSource: stats.collegesSource,
+      projectsBuilt: stats.projectsBuilt,
+      projectsSource: stats.projectsSource,
       today: stats.today,
       this_week: stats.this_week,
       this_month: stats.this_month,
@@ -39,6 +44,8 @@ export async function GET() {
         total: null,
         collegesRepresented: null,
         collegesSource: null,
+        projectsBuilt: null,
+        projectsSource: null,
         error: "Unable to load community stats.",
       },
       { status: 502 },
