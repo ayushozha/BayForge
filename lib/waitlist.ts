@@ -8,7 +8,10 @@ export const waitlistUrl = process.env.WAITLIST_API_URL || DEFAULT_WAITLIST_URL;
 export const waitlistStatsUrl =
   process.env.WAITLIST_STATS_URL || waitlistUrl.replace(/\/subscribe\/?$/, "/stats");
 
-export const waitlistApiKey = process.env.WAITLIST_API_KEY || "";
+const rawWaitlistApiKey = process.env.WAITLIST_API_KEY?.trim() || "";
+
+export const waitlistApiKey =
+  rawWaitlistApiKey === "wl_your_project_api_key" ? "" : rawWaitlistApiKey;
 export const communityEmailListPath =
   process.env.COMMUNITY_EMAIL_LIST_PATH || process.env.EMAIL_LIST_PATH || "";
 
@@ -76,9 +79,13 @@ export async function getUploadedEmailListStats() {
 
 export async function getCommunityStats() {
   if (waitlistApiKey) {
-    const waitlistStats = await getWaitlistCommunityStats();
-    if (typeof waitlistStats.total === "number") {
-      return waitlistStats;
+    try {
+      const waitlistStats = await getWaitlistCommunityStats();
+      if (typeof waitlistStats.total === "number") {
+        return waitlistStats;
+      }
+    } catch {
+      // Fall through to the uploaded email-list fallback when it is configured.
     }
   }
 
