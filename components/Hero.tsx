@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import scene1 from "@/public/assets/1.png";
 import scene2 from "@/public/assets/2.png";
 import scene3 from "@/public/assets/3.png";
+import CommunityCollegeCountLabel from "./CommunityCollegeCountLabel";
 import CommunityCountLabel from "./CommunityCountLabel";
 import { HeroSubscribeForm } from "./SubscribeForm";
 
@@ -172,7 +173,7 @@ export default function Hero() {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 9h-3.1a15 15 0 0 0-1.1-5 8 8 0 0 1 4.2 5ZM12 4.1c.8 1.2 1.5 3.5 1.7 6.9h-3.4c.2-3.4.9-5.7 1.7-6.9ZM4.3 13h3.9c.1 1.9.4 3.6.9 5a8 8 0 0 1-4.8-5Zm3.9-2H4.3A8 8 0 0 1 9.1 6c-.5 1.4-.8 3.1-.9 5Zm3.8 8.9c-.8-1.2-1.5-3.5-1.7-6.9h3.4c-.2 3.4-.9 5.7-1.7 6.9Zm2.9-1.9c.5-1.4.8-3.1.9-5h3.1a8 8 0 0 1-4 5Z" />
               </svg>
-              <span>80+</span>
+              <CommunityCollegeCountLabel />
             </dt>
             <dd>Colleges Represented</dd>
           </div>

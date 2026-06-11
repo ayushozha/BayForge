@@ -10,5 +10,6 @@ server.*.log
 bayforge-*.png
 .playwright-mcp/
 data/community-emails.*
+data/community-database-export.*
 uploads/
 .DS_Store
