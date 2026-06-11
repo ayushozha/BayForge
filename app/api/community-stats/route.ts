@@ -9,6 +9,7 @@ export async function GET() {
     if (
       typeof stats.total !== "number" &&
       typeof stats.collegesRepresented !== "number" &&
+      typeof stats.eventsHosted !== "number" &&
       typeof stats.projectsBuilt !== "number"
     ) {
       return NextResponse.json({
@@ -17,6 +18,8 @@ export async function GET() {
         total: null,
         collegesRepresented: null,
         collegesSource: null,
+        eventsHosted: null,
+        eventsSource: null,
         projectsBuilt: null,
         projectsSource: null,
         error:
@@ -30,6 +33,8 @@ export async function GET() {
       total: stats.total,
       collegesRepresented: stats.collegesRepresented,
       collegesSource: stats.collegesSource,
+      eventsHosted: stats.eventsHosted,
+      eventsSource: stats.eventsSource,
       projectsBuilt: stats.projectsBuilt,
       projectsSource: stats.projectsSource,
       today: stats.today,
@@ -44,6 +49,8 @@ export async function GET() {
         total: null,
         collegesRepresented: null,
         collegesSource: null,
+        eventsHosted: null,
+        eventsSource: null,
         projectsBuilt: null,
         projectsSource: null,
         error: "Unable to load community stats.",

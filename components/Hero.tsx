@@ -7,6 +7,7 @@ import scene2 from "@/public/assets/2.png";
 import scene3 from "@/public/assets/3.png";
 import CommunityCollegeCountLabel from "./CommunityCollegeCountLabel";
 import CommunityCountLabel from "./CommunityCountLabel";
+import CommunityEventCountLabel from "./CommunityEventCountLabel";
 import CommunityProjectCountLabel from "./CommunityProjectCountLabel";
 import { HeroSubscribeForm } from "./SubscribeForm";
 
@@ -156,7 +157,7 @@ export default function Hero() {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="m13 2-8 12h6l-1 8 9-13h-6l0-7Z" />
               </svg>
-              <span>48</span>
+              <CommunityEventCountLabel />
             </dt>
             <dd>Events Hosted</dd>
           </div>
