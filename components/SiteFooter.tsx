@@ -1,4 +1,5 @@
 import BrandSymbol from "./BrandSymbol";
+import CurrentYear from "./CurrentYear";
 
 export default function SiteFooter() {
   return (
@@ -37,7 +38,9 @@ export default function SiteFooter() {
           <a href="mailto:outreach@bayforge.events">outreach@bayforge.events</a>
         </div>
       </div>
-      <p className="copyright">&copy; 2025 Bay Forge. All rights reserved.</p>
+      <p className="copyright">
+        &copy; <CurrentYear /> Bay Forge. All rights reserved.
+      </p>
     </footer>
   );
 }
