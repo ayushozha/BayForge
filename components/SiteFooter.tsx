@@ -34,7 +34,7 @@ export default function SiteFooter() {
         <div className="footer-links">
           <h3>Location</h3>
           <p>Bay Area, California</p>
-          <a href="mailto:hello@bayforge.dev">hello@bayforge.dev</a>
+          <a href="mailto:outreach@bayforge.events">outreach@bayforge.events</a>
         </div>
       </div>
       <p className="copyright">&copy; 2025 Bay Forge. All rights reserved.</p>
