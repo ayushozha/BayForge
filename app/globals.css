@@ -251,15 +251,29 @@ svg {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(520px, 690px) minmax(260px, 1fr);
+  grid-template-columns: minmax(520px, 650px) minmax(300px, 1fr);
   align-items: center;
-  gap: 30px;
+  gap: 48px;
   max-width: 1368px;
   margin: 0 auto;
 }
 
 .hero-copy {
-  max-width: 690px;
+  position: relative;
+  max-width: 626px;
+  padding-left: 24px;
+}
+
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  bottom: 8px;
+  left: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--magenta), var(--violet), var(--cyan));
+  box-shadow: 0 0 24px rgba(185, 54, 255, 0.55);
 }
 
 .eyebrow {
@@ -280,12 +294,12 @@ svg {
 }
 
 h1 {
-  max-width: 690px;
+  max-width: 626px;
   margin: 0;
   color: #fff;
   font-family: var(--display);
-  font-size: 4.7rem;
-  line-height: 0.92;
+  font-size: 4.55rem;
+  line-height: 0.94;
   text-transform: uppercase;
   letter-spacing: 0;
   text-shadow: 0 4px 26px rgba(0, 0, 0, 0.45);
@@ -311,9 +325,9 @@ h1 span {
 }
 
 .hero-lede {
-  max-width: 560px;
-  margin: 26px 0 28px;
-  color: rgba(244, 241, 255, 0.82);
+  max-width: 540px;
+  margin: 24px 0 26px;
+  color: rgba(244, 241, 255, 0.88);
   font-size: 1.15rem;
   line-height: 1.55;
 }
@@ -322,14 +336,15 @@ h1 span {
   display: grid;
   grid-template-columns: minmax(210px, 1fr) auto;
   align-items: stretch;
-  max-width: 502px;
+  max-width: 518px;
   border: 1px solid rgba(185, 54, 255, 0.52);
   border-radius: 7px;
   overflow: hidden;
-  background: rgba(7, 7, 22, 0.64);
+  background: rgba(5, 8, 24, 0.78);
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.04),
-    0 0 22px rgba(185, 54, 255, 0.14);
+    0 18px 42px rgba(2, 3, 10, 0.34),
+    0 0 24px rgba(185, 54, 255, 0.18);
 }
 
 .input-wrap {
@@ -352,7 +367,7 @@ h1 span {
 .input-wrap input {
   width: 100%;
   min-width: 0;
-  height: 48px;
+  height: 52px;
   border: 0;
   outline: 0;
   background: transparent;
@@ -367,7 +382,7 @@ h1 span {
 
 .form-button {
   min-width: 150px;
-  height: 48px;
+  height: 52px;
   border-radius: 0;
   border: 0;
 }
@@ -379,11 +394,11 @@ h1 span {
 
 .form-status {
   position: relative;
-  max-width: 490px;
-  min-height: 48px;
-  margin: 18px 0 0;
-  padding-left: 30px;
-  color: rgba(231, 226, 246, 0.8);
+  max-width: 520px;
+  min-height: 42px;
+  margin: 16px 0 0;
+  padding-left: 34px;
+  color: rgba(236, 232, 250, 0.86);
   font-weight: 700;
   line-height: 1.45;
 }
@@ -392,9 +407,9 @@ h1 span {
   content: "";
   position: absolute;
   left: 0;
-  top: 4px;
-  width: 18px;
-  height: 18px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 2px solid var(--violet);
   box-shadow: 0 0 14px rgba(185, 54, 255, 0.45);
@@ -403,7 +418,7 @@ h1 span {
 .form-status::after {
   content: "";
   position: absolute;
-  left: 6px;
+  left: 7px;
   top: 9px;
   width: 6px;
   height: 3px;
@@ -434,7 +449,7 @@ h1 span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   padding: 8px 12px;
   border: 1px solid rgba(57, 213, 255, 0.24);
   border-radius: 7px;
@@ -458,7 +473,7 @@ h1 span {
 
 .play-button {
   position: absolute;
-  top: 44%;
+  top: 50%;
   left: 54%;
   z-index: 3;
   display: grid;
@@ -1307,6 +1322,11 @@ h1 span {
 
   .hero-copy {
     max-width: 100%;
+    padding-left: 0;
+  }
+
+  .hero-copy::before {
+    display: none;
   }
 
   .eyebrow {
