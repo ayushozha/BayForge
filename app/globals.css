@@ -1045,13 +1045,6 @@ h1 span {
   transform: translateY(-1px);
 }
 
-.partner-logo span {
-  color: inherit;
-  font-size: 1.1rem;
-  font-weight: 900;
-  text-align: center;
-}
-
 .partner-logo-image {
   max-width: 112px;
   max-height: 32px;
@@ -1384,9 +1377,6 @@ h1 span {
     gap: 16px;
   }
 
-  .partner-logo span {
-    font-size: 0.98rem;
-  }
 }
 
 @media (max-width: 860px) {
@@ -1698,10 +1688,6 @@ h1 span {
 
   .partner-logo {
     justify-items: start;
-  }
-
-  .partner-logo span {
-    text-align: left;
   }
 
   .newsletter-section {

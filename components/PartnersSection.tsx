@@ -17,10 +17,14 @@ function isExternalHref(href: string): boolean {
 }
 
 function SponsorLogo({ sponsor }: { sponsor: SponsorData }) {
-  const content = sponsor.logoUrl ? (
-    <img className="partner-logo-image" src={sponsor.logoUrl} alt={sponsor.logoAlt} />
-  ) : (
-    <span>{sponsor.name}</span>
+  const content = (
+    <img
+      className="partner-logo-image"
+      src={sponsor.logoUrl}
+      alt={sponsor.logoAlt}
+      loading="lazy"
+      decoding="async"
+    />
   );
 
   if (!isLinkedSponsor(sponsor.href)) {

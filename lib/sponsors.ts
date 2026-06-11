@@ -48,7 +48,7 @@ export type SponsorData = {
   name: string;
   tier: string | null;
   href: string;
-  logoUrl: string | null;
+  logoUrl: string;
   logoAlt: string;
   order: number | null;
 };
@@ -67,6 +67,46 @@ function isRecord(value: unknown): value is SponsorRecord {
 
 function normalizeKey(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+const KNOWN_SPONSOR_LOGOS: Record<string, { logoUrl: string; logoAlt: string }> = {
+  amazonwebservices: {
+    logoUrl: "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
+    logoAlt: "AWS logo",
+  },
+  aws: {
+    logoUrl: "https://a0.awsstatic.com/libra-css/images/logos/aws_logo_smile_1200x630.png",
+    logoAlt: "AWS logo",
+  },
+  figma: {
+    logoUrl: "https://static.figma.com/app/icon/1/favicon.svg",
+    logoAlt: "Figma logo",
+  },
+  github: {
+    logoUrl: "https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png",
+    logoAlt: "GitHub logo",
+  },
+  google: {
+    logoUrl: "https://www.gstatic.com/images/branding/googlelogo/svg/googlelogo_clr_74x24px.svg",
+    logoAlt: "Google logo",
+  },
+  notion: {
+    logoUrl: "https://www.notion.so/images/logo-ios.png",
+    logoAlt: "Notion logo",
+  },
+  stripe: {
+    logoUrl:
+      "https://images.stripeassets.com/fzn2n1nzq965/1hgcBNd12BfT9VLgbId7By/01d91920114b124fb4cf6d448f9f06eb/favicon.svg",
+    logoAlt: "Stripe logo",
+  },
+  vercel: {
+    logoUrl: "https://assets.vercel.com/image/upload/front/favicon/vercel/180x180.png",
+    logoAlt: "Vercel logo",
+  },
+};
+
+function knownSponsorLogo(name: string): { logoUrl: string; logoAlt: string } | null {
+  return KNOWN_SPONSOR_LOGOS[normalizeKey(name)] ?? null;
 }
 
 function cleanText(value: unknown, fallback = "", maxLength = 120): string {
@@ -286,6 +326,11 @@ function toSponsor(record: SponsorRecord, index: number): SponsorData | null {
   const explicitId = cleanText(getField(record, ID_KEYS), "", 120);
   const href = toSafeHref(getField(record, HREF_KEYS));
   const idSource = explicitId || `${name}-${href}`;
+  const knownLogo = knownSponsorLogo(name);
+  const logoUrl = toSafeLogoUrl(getField(record, LOGO_KEYS)) ?? knownLogo?.logoUrl ?? null;
+  if (!logoUrl) {
+    return null;
+  }
 
   return {
     id:
@@ -296,8 +341,8 @@ function toSponsor(record: SponsorRecord, index: number): SponsorData | null {
     name,
     tier: cleanText(getField(record, TIER_KEYS), "", 48) || null,
     href,
-    logoUrl: toSafeLogoUrl(getField(record, LOGO_KEYS)),
-    logoAlt: cleanText(getField(record, LOGO_ALT_KEYS), `${name} logo`, 120),
+    logoUrl,
+    logoAlt: cleanText(getField(record, LOGO_ALT_KEYS), knownLogo?.logoAlt ?? `${name} logo`, 120),
     order: toOptionalNumber(getField(record, ORDER_KEYS)),
   };
 }
