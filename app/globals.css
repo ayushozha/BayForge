@@ -301,9 +301,9 @@ svg {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: minmax(520px, 650px) minmax(300px, 1fr);
+  grid-template-columns: minmax(460px, 650px) minmax(260px, 1fr);
   align-items: center;
-  gap: 48px;
+  gap: clamp(24px, 4vw, 48px);
   width: 100%;
   max-width: 1368px;
   margin: 0 auto;
