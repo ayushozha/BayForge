@@ -9,4 +9,6 @@ next-env.d.ts
 server.*.log
 bayforge-*.png
 .playwright-mcp/
+data/community-emails.*
+uploads/
 .DS_Store

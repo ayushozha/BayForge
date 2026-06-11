@@ -2,9 +2,6 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-const FALLBACK_COUNT = 8500;
-const FALLBACK_LABEL = "8,500+";
-
 type CommunityCountContextValue = {
   label: string;
   applyTotal: (total: number | null, increment: number) => void;
@@ -17,9 +14,16 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
 
   const applyTotal = useCallback((total: number | null, increment: number) => {
     setCount(current => {
-      const base = current ?? FALLBACK_COUNT;
-      const next = typeof total === "number" ? total : base + increment;
-      return Number.isFinite(next) && next >= 0 ? Math.round(next) : current;
+      const next =
+        typeof total === "number"
+          ? total
+          : typeof current === "number"
+            ? current + increment
+            : null;
+
+      return typeof next === "number" && Number.isFinite(next) && next >= 0
+        ? Math.round(next)
+        : current;
     });
   }, []);
 
@@ -42,7 +46,7 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
     };
   }, [applyTotal]);
 
-  const label = count === null ? FALLBACK_LABEL : count.toLocaleString("en-US");
+  const label = count === null ? "..." : count.toLocaleString("en-US");
 
   return (
     <CommunityCountContext.Provider value={{ label, applyTotal }}>

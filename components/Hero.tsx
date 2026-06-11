@@ -145,7 +145,7 @@ export default function Hero() {
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M16 11a4 4 0 1 0-3.2-6.4A5 5 0 0 1 14 8a5 5 0 0 1-1.2 3.2A4 4 0 0 0 16 11Zm-8 0a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-3.3 0-6 1.8-6 4v2h12v-2c0-2.2-2.7-4-6-4Zm8 0c-.8 0-1.6.1-2.3.4 1.4.9 2.3 2.1 2.3 3.6v2h6v-2c0-2.2-2.7-4-6-4Z" />
               </svg>
-              <span>12K+</span>
+              <CommunityCountLabel as="span" />
             </dt>
             <dd>Builders</dd>
           </div>
