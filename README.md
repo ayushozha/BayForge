@@ -49,6 +49,7 @@ This repository contains the source for the Bay Forge landing site. The app pres
 | Community stats proxy | Implemented | `app/api/community-stats/route.ts`, `components/CommunityCountProvider.tsx` |
 | Runtime env sample | Source-complete | `.env.example` |
 | Automated tests | Not configured | `package.json` has `dev`, `build`, and `start`, but no `test` script |
+| CI workflow | Source-complete | `.github/workflows/datadog-synthetics.yml` runs Datadog Synthetic tests when Datadog secrets are configured |
 | Production deployment config | Not checked in | No Vercel, Docker, or hosting config is present beyond standard Next.js settings |
 
 ## Screenshots
@@ -69,15 +70,17 @@ Prerequisites:
 - npm, using the checked-in `package-lock.json`.
 - A waitlist API key if you want live signup and community statistics.
 
-PowerShell:
+PowerShell, macOS, and Linux:
 
-```powershell
+```shell
 npm install
-Copy-Item .env.example .env.local
+cp .env.example .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+The copied `.env.local` keeps `WAITLIST_API_KEY` empty by default. Leave it empty for the local fallback count, or set a real key when you want live signup and community statistics.
 
 Production build:
 
@@ -94,7 +97,7 @@ Set these values in `.env.local` for local development or in the deployment envi
 | --- | --- | --- | --- |
 | `WAITLIST_API_URL` | `https://emailwaitlist.ayushojha.com/api/v1/subscribe` | No | Upstream endpoint used by `POST /api/subscribe`. |
 | `WAITLIST_STATS_URL` | Derived from `WAITLIST_API_URL` by replacing `/subscribe` with `/stats` | No | Upstream endpoint used by `GET /api/community-stats`. |
-| `WAITLIST_API_KEY` | Empty | Yes for live waitlist behavior | Sent server-side as `X-API-Key`; never exposed to the browser by this app. |
+| `WAITLIST_API_KEY` | Empty | Yes for live waitlist behavior | Sent server-side as `X-API-Key`; never exposed to the browser by this app. Leave empty for the default local fallback mode. |
 
 When `WAITLIST_API_KEY` is missing, signup requests return a server configuration error and community stats return `{ configured: false, total: null }`. The visible page keeps its designed fallback community count.
 
@@ -189,6 +192,7 @@ The browser only talks to local Next.js routes. The API key stays server-side in
 | `lib/waitlist.ts` | Waitlist URL, API key, email validation, and stats fetch helpers. |
 | `public/assets/` | Logo and scene images used by the page. |
 | `docs/assets/` | README screenshots. |
+| `.github/workflows/datadog-synthetics.yml` | Datadog Synthetic test workflow; skips when Datadog secrets are not configured. |
 | `.env.example` | Local environment template. |
 
 ## GitHub Account Rule

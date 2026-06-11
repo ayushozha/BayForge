@@ -5,7 +5,10 @@ export const waitlistUrl = process.env.WAITLIST_API_URL || DEFAULT_WAITLIST_URL;
 export const waitlistStatsUrl =
   process.env.WAITLIST_STATS_URL || waitlistUrl.replace(/\/subscribe\/?$/, "/stats");
 
-export const waitlistApiKey = process.env.WAITLIST_API_KEY || "";
+const rawWaitlistApiKey = process.env.WAITLIST_API_KEY?.trim() || "";
+
+export const waitlistApiKey =
+  rawWaitlistApiKey === "wl_your_project_api_key" ? "" : rawWaitlistApiKey;
 
 export function isEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 320;
