@@ -130,12 +130,14 @@ svg {
 }
 
 .brand-name {
-  font-family: var(--display);
-  font-size: 1.45rem;
+  font-family: "Segoe UI Variable Display", "Segoe UI Variable", "SF Pro Display", var(--font);
+  font-size: 1.08rem;
   line-height: 1;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0;
-  color: #f8f7ff;
+  color: rgba(248, 247, 255, 0.96);
+  font-weight: 750;
+  text-shadow: 0 0 18px rgba(185, 54, 255, 0.18);
 }
 
 .nav-links {
@@ -1097,7 +1099,7 @@ h1 span {
 }
 
 .footer-brand .brand-name {
-  font-size: 1rem;
+  font-size: 0.96rem;
 }
 
 .footer-brand p,
