@@ -52,11 +52,13 @@ configured for this auth client.
 `RESEND_API_KEY` (send-only key), `EMAIL_FROM`, `NOTIFY_EMAIL`.
 
 - Every successful waitlist signup fire-and-forgets a notification to
-  `NOTIFY_EMAIL` (outreach@bayforge.events). Works today.
-- A welcome email to the subscriber activates automatically once
-  `EMAIL_FROM` is switched to a `bayforge.events` address — that requires
-  the domain to be verified in the Resend account first. Until then Resend
-  only delivers from `onboarding@resend.dev` to the account owner.
+  `NOTIFY_EMAIL` (outreach@bayforge.events) and a welcome email to the
+  subscriber. Sender: `Bay Forge <noreply@updates.bayforge.events>` — the
+  `updates.bayforge.events` sending subdomain is verified in Resend
+  (DKIM/SPF records live on the Hostinger zone).
+- Auth emails (signup verification, password reset) are sent by the auth
+  service through the same Resend account via BayForge's per-client email
+  config; reset links land on `/reset-password?token=...` here.
 
 ## Integrations
 
