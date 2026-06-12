@@ -132,6 +132,12 @@ export default function AuthForm({ mode, initialError }: Props) {
           />
         </label>
 
+        {mode === "login" && (
+          <p className="auth-forgot">
+            <a href="/forgot-password">Forgot password?</a>
+          </p>
+        )}
+
         <button className="button button-primary auth-submit" type="submit" disabled={submitting}>
           {cta}
         </button>

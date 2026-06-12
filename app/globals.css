@@ -1817,3 +1817,18 @@ h1 span {
     display: none;
   }
 }
+
+.auth-forgot {
+  margin: -6px 0 0;
+  text-align: right;
+  font-size: 0.85rem;
+}
+
+.auth-forgot a {
+  color: var(--soft);
+  text-decoration: none;
+}
+
+.auth-forgot a:hover {
+  color: var(--cyan);
+}
