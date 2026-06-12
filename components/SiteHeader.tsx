@@ -1,3 +1,4 @@
+import AuthStatus from "./AuthStatus";
 import BrandSymbol from "./BrandSymbol";
 
 export default function SiteHeader() {
@@ -17,6 +18,7 @@ export default function SiteHeader() {
       </nav>
 
       <div className="nav-actions">
+        <AuthStatus />
         <a className="button button-secondary" href="#community" aria-label="Join Bay Forge Discord">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M8.8 9.2c-.7 0-1.2.6-1.2 1.3s.5 1.3 1.2 1.3 1.2-.6 1.2-1.3-.5-1.3-1.2-1.3Zm6.4 0c-.7 0-1.2.6-1.2 1.3s.5 1.3 1.2 1.3 1.2-.6 1.2-1.3-.5-1.3-1.2-1.3Z" />
