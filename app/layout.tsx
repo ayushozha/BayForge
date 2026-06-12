@@ -14,7 +14,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          defer
+          src="https://pulse.ayushojha.com/api/script.js"
+          data-api="https://pulse.ayushojha.com"
+          data-key="pa_live_CuTXyZWUl_dTX5JqxqYnBAC8"
+        ></script>
+      </body>
     </html>
   );
 }
