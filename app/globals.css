@@ -524,36 +524,6 @@ h1 span {
   align-self: stretch;
 }
 
-.play-button {
-  position: absolute;
-  top: 50%;
-  left: 54%;
-  z-index: 3;
-  display: grid;
-  place-items: center;
-  width: 108px;
-  height: 108px;
-  border: 2px solid rgba(255, 75, 255, 0.82);
-  border-radius: 50%;
-  background:
-    linear-gradient(145deg, rgba(13, 8, 30, 0.82), rgba(44, 11, 79, 0.56)),
-    rgba(6, 5, 18, 0.72);
-  color: #fff;
-  box-shadow:
-    0 0 42px rgba(185, 54, 255, 0.62),
-    inset 0 0 32px rgba(255, 255, 255, 0.08);
-  cursor: pointer;
-  transform: translate(-50%, -50%);
-}
-
-.play-button svg {
-  width: 44px;
-  height: 44px;
-  fill: currentColor;
-  margin-left: 4px;
-  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.75));
-}
-
 .scene-rail {
   position: absolute;
   right: 0;
@@ -1250,48 +1220,6 @@ h1 span {
   text-align: center;
 }
 
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: grid;
-  place-items: center;
-  padding: 32px;
-  background: rgba(2, 3, 10, 0.86);
-  backdrop-filter: blur(12px);
-}
-
-.modal[hidden] {
-  display: none;
-}
-
-.modal-frame {
-  width: min(1120px, 100%);
-  border: 1px solid rgba(185, 54, 255, 0.5);
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 50px rgba(185, 54, 255, 0.38);
-}
-
-.modal-frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.modal-close {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  min-height: 40px;
-  padding: 0 16px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 7px;
-  background: rgba(8, 8, 20, 0.9);
-  color: #fff;
-  cursor: pointer;
-}
-
 @media (max-width: 1120px) {
   .site-header {
     gap: 18px;
@@ -1498,10 +1426,6 @@ h1 span {
     margin-top: 24px;
   }
 
-  .play-button {
-    display: none;
-  }
-
   .scene-rail {
     left: 0;
     right: auto;
@@ -1637,10 +1561,6 @@ h1 span {
 
   .stat dd {
     text-align: right;
-  }
-
-  .modal {
-    padding: 18px;
   }
 
   .section-shell,
