@@ -12,6 +12,7 @@ type Props = {
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_failed: "Social sign-in didn't complete. Please try again.",
   AUTH_OAUTH_CANCELLED: "Sign-in was cancelled.",
+  provider_unavailable: "That sign-in method isn't available right now. Please use email instead.",
 };
 
 function GitHubIcon() {

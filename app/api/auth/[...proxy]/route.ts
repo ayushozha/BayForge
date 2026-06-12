@@ -3,6 +3,7 @@ import {
   ACCESS_COOKIE,
   AUTH_SERVICE_URL,
   REFRESH_COOKIE,
+  SITE_ORIGIN,
   applySessionCookies,
   authApiKey,
   clearSessionCookies,
@@ -94,11 +95,9 @@ async function beginOAuth(req: NextRequest, path: string): Promise<NextResponse>
   if (location && upstream.status >= 300 && upstream.status < 400) {
     return NextResponse.redirect(location, 302);
   }
-  const data = await upstream.text();
-  return new NextResponse(data, {
-    status: upstream.status,
-    headers: { "Content-Type": upstream.headers.get("Content-Type") || "application/json" },
-  });
+  // Provider not configured (or other begin failure): bounce back to the
+  // login page with a readable error instead of surfacing raw JSON.
+  return NextResponse.redirect(new URL("/login?error=provider_unavailable", SITE_ORIGIN), 302);
 }
 
 async function getMe(req: NextRequest): Promise<NextResponse> {
@@ -111,7 +110,7 @@ async function getMe(req: NextRequest): Promise<NextResponse> {
   if (access) {
     const upstream = await fetchMe(access);
     if (upstream.ok) {
-      return NextResponse.json(await upstream.json(), { status: 200 });
+      return NextResponse.json(normalizeUser(await upstream.json()), { status: 200 });
     }
     if (upstream.status !== 401 || !refresh) {
       return NextResponse.json({ user: null }, { status: 200 });
@@ -131,10 +130,20 @@ async function getMe(req: NextRequest): Promise<NextResponse> {
   }
   const tokens = await refreshed.json().catch(() => ({}));
   const retried = tokens.access_token ? await fetchMe(tokens.access_token) : null;
-  const payload = retried && retried.ok ? await retried.json() : { user: tokens.user ?? null };
+  const payload =
+    retried && retried.ok ? normalizeUser(await retried.json()) : { user: tokens.user ?? null };
   const response = NextResponse.json(payload, { status: 200 });
   applySessionCookies(response, tokens);
   return response;
+}
+
+// The auth service's /me returns the user object at the top level; the
+// frontend always consumes { user: ... }.
+function normalizeUser(data: Record<string, unknown>): { user: unknown } {
+  if (data && typeof data === "object" && "user" in data) {
+    return { user: (data as { user: unknown }).user };
+  }
+  return { user: data && typeof data === "object" && "id" in data ? data : null };
 }
 
 async function fetchMe(accessToken: string): Promise<Response> {

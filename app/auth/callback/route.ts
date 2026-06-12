@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AUTH_SERVICE_URL, applySessionCookies } from "@/lib/authService";
+import { AUTH_SERVICE_URL, SITE_ORIGIN, applySessionCookies } from "@/lib/authService";
 
 // Lands here after a social login: the auth service redirects with a
 // one-time ?auth_code which we exchange server-side for tokens, stored as
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
 
   if (!authCode) {
     const reason = providerError || "oauth_failed";
-    return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(reason)}`, req.url));
+    return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(reason)}`, SITE_ORIGIN));
   }
 
   const upstream = await fetch(`${AUTH_SERVICE_URL}/api/auth/redirect/exchange`, {
@@ -21,15 +21,15 @@ export async function GET(req: NextRequest) {
   }).catch(() => null);
 
   if (!upstream || !upstream.ok) {
-    return NextResponse.redirect(new URL("/login?error=oauth_failed", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_failed", SITE_ORIGIN));
   }
 
   const tokens = await upstream.json().catch(() => ({}));
   if (!tokens.access_token) {
-    return NextResponse.redirect(new URL("/login?error=oauth_failed", req.url));
+    return NextResponse.redirect(new URL("/login?error=oauth_failed", SITE_ORIGIN));
   }
 
-  const response = NextResponse.redirect(new URL("/?signed_in=1", req.url));
+  const response = NextResponse.redirect(new URL("/?signed_in=1", SITE_ORIGIN));
   applySessionCookies(response, tokens);
   return response;
 }

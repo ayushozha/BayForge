@@ -5,6 +5,10 @@ export const AUTH_SERVICE_URL =
 
 export const authApiKey = process.env.AUTH_API_KEY?.trim() || "";
 
+// Public origin of this site, used for absolute redirects. Behind the
+// reverse proxy, request URLs resolve to the internal 0.0.0.0:3000 host.
+export const SITE_ORIGIN = process.env.SITE_ORIGIN?.trim() || "https://bayforge.events";
+
 export const ACCESS_COOKIE = "bf_access";
 export const REFRESH_COOKIE = "bf_refresh";
 
