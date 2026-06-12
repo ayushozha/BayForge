@@ -9,4 +9,10 @@ next-env.d.ts
 server.*.log
 bayforge-*.png
 .playwright-mcp/
+data/community-emails.*
+data/community-database-export.*
+data/community-events-export.*
+data/community-newsletter-export.*
+data/community-sponsors-export.*
+uploads/
 .DS_Store

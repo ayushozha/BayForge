@@ -2,11 +2,11 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-const FALLBACK_COUNT = 8500;
-const FALLBACK_LABEL = "8,500+";
-
 type CommunityCountContextValue = {
   label: string;
+  collegesLabel: string;
+  eventsLabel: string;
+  projectsLabel: string;
   applyTotal: (total: number | null, increment: number) => void;
 };
 
@@ -14,12 +14,22 @@ const CommunityCountContext = createContext<CommunityCountContextValue | null>(n
 
 export function CommunityCountProvider({ children }: { children: React.ReactNode }) {
   const [count, setCount] = useState<number | null>(null);
+  const [collegesRepresented, setCollegesRepresented] = useState<number | null>(null);
+  const [eventsHosted, setEventsHosted] = useState<number | null>(null);
+  const [projectsBuilt, setProjectsBuilt] = useState<number | null>(null);
 
   const applyTotal = useCallback((total: number | null, increment: number) => {
     setCount(current => {
-      const base = current ?? FALLBACK_COUNT;
-      const next = typeof total === "number" ? total : base + increment;
-      return Number.isFinite(next) && next >= 0 ? Math.round(next) : current;
+      const next =
+        typeof total === "number"
+          ? total
+          : typeof current === "number"
+            ? current + increment
+            : null;
+
+      return typeof next === "number" && Number.isFinite(next) && next >= 0
+        ? Math.round(next)
+        : current;
     });
   }, []);
 
@@ -32,6 +42,18 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
         if (!cancelled && typeof data.total === "number") {
           applyTotal(data.total, 0);
         }
+
+        if (!cancelled && typeof data.collegesRepresented === "number") {
+          setCollegesRepresented(Math.round(data.collegesRepresented));
+        }
+
+        if (!cancelled && typeof data.eventsHosted === "number") {
+          setEventsHosted(Math.round(data.eventsHosted));
+        }
+
+        if (!cancelled && typeof data.projectsBuilt === "number") {
+          setProjectsBuilt(Math.round(data.projectsBuilt));
+        }
       })
       .catch(() => {
         // Keep the design fallback when stats are unavailable.
@@ -42,10 +64,16 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
     };
   }, [applyTotal]);
 
-  const label = count === null ? FALLBACK_LABEL : count.toLocaleString("en-US");
+  const label = count === null ? "..." : count.toLocaleString("en-US");
+  const collegesLabel =
+    collegesRepresented === null ? "..." : collegesRepresented.toLocaleString("en-US");
+  const eventsLabel = eventsHosted === null ? "..." : eventsHosted.toLocaleString("en-US");
+  const projectsLabel = projectsBuilt === null ? "..." : projectsBuilt.toLocaleString("en-US");
 
   return (
-    <CommunityCountContext.Provider value={{ label, applyTotal }}>
+    <CommunityCountContext.Provider
+      value={{ label, collegesLabel, eventsLabel, projectsLabel, applyTotal }}
+    >
       {children}
     </CommunityCountContext.Provider>
   );

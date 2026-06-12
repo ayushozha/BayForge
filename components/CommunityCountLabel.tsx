@@ -2,7 +2,11 @@
 
 import { useCommunityCount } from "./CommunityCountProvider";
 
-export default function CommunityCountLabel() {
+type CommunityCountLabelProps = {
+  as?: "strong" | "span";
+};
+
+export default function CommunityCountLabel({ as = "strong" }: CommunityCountLabelProps) {
   const { label } = useCommunityCount();
-  return <strong>{label}</strong>;
+  return as === "span" ? <span>{label}</span> : <strong>{label}</strong>;
 }

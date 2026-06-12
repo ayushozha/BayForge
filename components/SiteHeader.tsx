@@ -1,11 +1,10 @@
-import Image from "next/image";
-import logo from "@/public/assets/7.png";
+import BrandSymbol from "./BrandSymbol";
 
 export default function SiteHeader() {
   return (
     <header className="site-header" aria-label="Primary navigation">
       <a className="brand" href="/" aria-label="Bay Forge home">
-        <Image className="brand-logo" src={logo} alt="" width={58} height={58} />
+        <BrandSymbol className="brand-logo" idPrefix="header-brand" />
         <span className="brand-name">Bay Forge</span>
       </a>
 
