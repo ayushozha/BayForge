@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { notifyNewSubscriber, sendWelcomeEmail } from "@/lib/email";
 import { getCommunityStats, isEmail, waitlistApiKey, waitlistUrl } from "@/lib/waitlist";
 
 const FALLBACK_ERRORS: Record<number, string> = {
@@ -56,6 +57,8 @@ export async function POST(request: Request) {
   const data = await upstream.json().catch(() => ({}));
 
   if (upstream.ok) {
+    notifyNewSubscriber(email, typeof metadata.source === "string" ? metadata.source : undefined);
+    sendWelcomeEmail(email);
     const stats = await getCommunityStats().catch(() => null);
     return NextResponse.json(
       {
