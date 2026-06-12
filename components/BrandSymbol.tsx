@@ -83,26 +83,44 @@ export default function BrandSymbol({ className, idPrefix }: BrandSymbolProps) {
         strokeWidth="0.8"
         opacity="0.72"
       />
+      <g filter={`url(#${glowFilter})`}>
+        <path
+          d="M14.3 39h24.1l4.2-5.5h7L44.3 42H14.3V39Z"
+          fill={`url(#${markGradient})`}
+        />
+        <path
+          d="M18 33.7h20.4l3.6-6.1H21.1L18 33.7Z"
+          fill={`url(#${markGradient})`}
+          opacity="0.9"
+        />
+        <path
+          d="M16.4 17.2 20.2 13l22.9 21.3-3.8 4.2-22.9-21.3Z"
+          fill={`url(#${markGradient})`}
+        />
+        <path
+          d="m35.2 13.6 4.2-4.5 10 9.4-4.2 4.5-10-9.4Z"
+          fill={`url(#${markGradient})`}
+        />
+        <path
+          d="m24.3 8.6 2 3.7 3.7 2-3.7 2-2 3.7-2-3.7-3.7-2 3.7-2 2-3.7Z"
+          fill="#fff9ff"
+        />
+      </g>
       <path
-        d="M15.8 14.2h23.5c5.8 0 9.4 3.2 9.4 8 0 3.3-1.8 5.8-5.2 7.1 4 1.1 6.3 4.2 6.3 8.1 0 5.2-4.2 8.4-10.7 8.4H15.8V14.2Zm8.3 6.6v6.2h12.3c2.2 0 3.7-1.2 3.7-3.1s-1.5-3.1-3.7-3.1H24.1Zm0 12.4v6.7h13.8c2.3 0 3.8-1.3 3.8-3.4 0-2-1.5-3.3-3.8-3.3H24.1Z"
-        fill={`url(#${markGradient})`}
-        fillRule="evenodd"
-        filter={`url(#${glowFilter})`}
+        d="M16.7 39.8h20M20.5 32h17.2M19.8 16.9l20.3 18.9M38.3 13.7l7.9 7.4"
+        fill="none"
+        stroke="#080916"
+        strokeOpacity="0.28"
+        strokeWidth="1.25"
+        strokeLinecap="round"
       />
       <path
-        d="M20.1 43.5 45.4 17.7"
+        d="M17.7 16.2 40.1 37M36.6 13.4l10.7 10"
         fill="none"
         stroke={`url(#${shineGradient})`}
         strokeWidth="1.35"
         strokeLinecap="round"
-      />
-      <path
-        d="M24.2 20.8v19.1"
-        fill="none"
-        stroke="#080916"
-        strokeOpacity="0.34"
-        strokeWidth="1.7"
-        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M12.2 12.3h17.2"
