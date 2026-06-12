@@ -10,7 +10,8 @@ export const emailFrom = process.env.EMAIL_FROM?.trim() || "Bay Forge <onboardin
 
 const notifyEmail = process.env.NOTIFY_EMAIL?.trim() || "outreach@bayforge.events";
 
-const senderDomainVerified = /@bayforge\.events>?$/i.test(emailFrom);
+// Matches bayforge.events and any subdomain (e.g. updates.bayforge.events).
+const senderDomainVerified = /@(?:[a-z0-9-]+\.)*bayforge\.events>?$/i.test(emailFrom);
 
 type SendArgs = {
   to: string;
