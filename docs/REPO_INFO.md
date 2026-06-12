@@ -19,6 +19,33 @@
 
 Optional `COMMUNITY_*_PATH` variables (see `.env.example`) are unset in production; the site falls back to its designed static content.
 
+## Authentication
+
+Auth is provided by the shared auth service (client `bayforge`) and proxied
+server-side — the `X-API-Key` and all tokens stay off the browser:
+
+- `app/api/auth/[...proxy]/route.ts` forwards `/api/auth/*` to the service.
+  `login`/`signup`/`refresh` responses store the access + refresh tokens as
+  httpOnly cookies (`bf_access`, `bf_refresh`, parent-domain scoped via
+  `AUTH_COOKIE_DOMAIN`). `GET /api/auth/me` silently refreshes an expired
+  access token. `GET /api/auth/oauth/<provider>` begins social login
+  (`session_mode=token`) and hands the provider redirect to the browser.
+- `app/auth/callback/route.ts` receives the one-time `auth_code` after a
+  social login (the auth service redirects here via its per-client
+  `settings.ui.oauth_redirect_url` override), exchanges it server-side at
+  `POST /api/auth/redirect/exchange`, sets the session cookies, and lands on `/`.
+- `/login` + `/signup` pages, `components/AuthForm.tsx` (email/password +
+  GitHub/Google buttons), `components/AuthStatus.tsx` (header session state).
+
+Additional env (set in Coolify): `AUTH_SERVICE_URL`, `AUTH_API_KEY`
+(server-only), `AUTH_COOKIE_DOMAIN=.bayforge.events`, optional `SITE_ORIGIN`
+(defaults to `https://bayforge.events`; used for absolute redirects behind
+the reverse proxy).
+
+Provider status: GitHub login is live (per-client OAuth config). Google
+shows a friendly "unavailable" notice until a Google OAuth client is
+configured for this auth client.
+
 ## Integrations
 
 - **Email waitlist:** signups are proxied server-side through `app/api/subscribe/route.ts` to the shared email-waitlist service (project slug `bayforge`). Allowed origins: `https://bayforge.events`, `https://www.bayforge.events`.
