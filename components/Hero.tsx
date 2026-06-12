@@ -41,16 +41,14 @@ export default function Hero() {
 
   const selectScene = useCallback(
     (index: number) => {
-      setActiveIndex((currentIndex) => {
-        if (index === currentIndex) {
-          return currentIndex;
-        }
+      if (index === activeIndex) {
+        return;
+      }
 
-        transitionToScene(index);
-        return index;
-      });
+      setActiveIndex(index);
+      transitionToScene(index);
     },
-    [transitionToScene],
+    [activeIndex, transitionToScene],
   );
 
   useEffect(() => {
@@ -62,16 +60,13 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    const rotationTimer = window.setInterval(() => {
-      setActiveIndex((currentIndex) => {
-        const nextIndex = (currentIndex + 1) % SCENES.length;
-        transitionToScene(nextIndex);
-        return nextIndex;
-      });
+    const rotationTimer = window.setTimeout(() => {
+      const nextIndex = (activeIndex + 1) % SCENES.length;
+      selectScene(nextIndex);
     }, AUTO_ROTATE_MS);
 
-    return () => window.clearInterval(rotationTimer);
-  }, [transitionToScene]);
+    return () => window.clearTimeout(rotationTimer);
+  }, [activeIndex, selectScene]);
 
   return (
     <section className="hero" aria-labelledby="hero-title">
