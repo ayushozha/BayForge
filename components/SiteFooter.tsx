@@ -1,6 +1,8 @@
 import BrandSymbol from "./BrandSymbol";
 import CurrentYear from "./CurrentYear";
 
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "outreach@bayforge.events";
+
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -35,7 +37,7 @@ export default function SiteFooter() {
         <div className="footer-links">
           <h3>Location</h3>
           <p>Bay Area, California</p>
-          <a href="mailto:outreach@bayforge.events">outreach@bayforge.events</a>
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
         </div>
       </div>
       <p className="copyright">
