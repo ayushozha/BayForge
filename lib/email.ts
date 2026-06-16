@@ -72,7 +72,7 @@ export function sendWelcomeEmail(email: string): void {
   void sendEmail({
     to: email,
     subject: "Welcome to Bay Forge",
-    replyTo: notifyEmail,
+    replyTo: Array.isArray(notifyEmail) ? notifyEmail[0] : notifyEmail,
     html: [
       "<div style=\"font-family:Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a2e\">",
       "<h2 style=\"margin:0 0 12px\">You're on the Bay Forge list</h2>",
