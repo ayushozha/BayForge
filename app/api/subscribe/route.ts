@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { notifyNewSubscriber, sendWelcomeEmail } from "@/lib/email";
-import { getCommunityStats, isEmail, waitlistApiKey, waitlistUrl } from "@/lib/waitlist";
+import {
+  getCommunityStats,
+  isEmail,
+  masterWaitlistApiKey,
+  masterWaitlistUrl,
+  waitlistApiKey,
+  waitlistUrl,
+} from "@/lib/waitlist";
 
 const FALLBACK_ERRORS: Record<number, string> = {
   400: "Please enter a valid email address.",
@@ -59,6 +66,20 @@ export async function POST(request: Request) {
   if (upstream.ok) {
     notifyNewSubscriber(email, typeof metadata.source === "string" ? metadata.source : undefined);
     sendWelcomeEmail(email);
+    if (masterWaitlistApiKey) {
+      fetch(masterWaitlistUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-API-Key": masterWaitlistApiKey },
+        body: JSON.stringify({
+          email,
+          metadata: {
+            ...metadata,
+            source: metadata.source || "bayforge-landing",
+            submitted_via: "bayforge-proxy",
+          },
+        }),
+      }).catch(() => {});
+    }
     const stats = await getCommunityStats().catch(() => null);
     return NextResponse.json(
       {

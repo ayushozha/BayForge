@@ -12,6 +12,11 @@ const rawWaitlistApiKey = process.env.WAITLIST_API_KEY?.trim() || "";
 
 export const waitlistApiKey =
   rawWaitlistApiKey === "wl_your_project_api_key" ? "" : rawWaitlistApiKey;
+
+export const masterWaitlistUrl =
+  process.env.MASTER_WAITLIST_URL || DEFAULT_WAITLIST_URL;
+export const masterWaitlistApiKey = process.env.MASTER_WAITLIST_API_KEY?.trim() || "";
+
 export const communityEmailListPath =
   process.env.COMMUNITY_EMAIL_LIST_PATH || process.env.EMAIL_LIST_PATH || "";
 export const communityDatabaseExportPath = process.env.COMMUNITY_DATABASE_EXPORT_PATH || "";
