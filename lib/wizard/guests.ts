@@ -196,7 +196,25 @@ export const GUESTS: Guest[] = [
     roleLabel: "VIP ACCESS"
   },
 
-  // Co-hosts / core team
+  // Co-hosts / core team — main co-hosts first (Ayush, Melly, Saurabh), then the rest.
+  {
+    slug: "ayush",
+    name: "Ayush",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "melly",
+    name: "Melly",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "saurabh",
+    name: "Saurabh Khire",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
   {
     slug: "coco",
     name: "Coco",
@@ -212,18 +230,6 @@ export const GUESTS: Guest[] = [
   {
     slug: "gary",
     name: "Gary",
-    role: "cohost",
-    roleLabel: "CO-HOST · CORE TEAM"
-  },
-  {
-    slug: "ayush",
-    name: "Ayush",
-    role: "cohost",
-    roleLabel: "CO-HOST · CORE TEAM"
-  },
-  {
-    slug: "saurabh",
-    name: "Saurabh Khire",
     role: "cohost",
     roleLabel: "CO-HOST · CORE TEAM"
   }
