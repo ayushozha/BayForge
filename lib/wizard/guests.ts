@@ -200,8 +200,8 @@ export const GUESTS: Guest[] = [
     roleLabel: "HONORED JUDGE"
   },
   {
-    slug: "carmen-dou",
-    name: "Carmen Dou",
+    slug: "wei-dou",
+    name: "Wei Dou",
     role: "judge",
     roleLabel: "HONORED JUDGE"
   },
