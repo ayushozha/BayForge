@@ -204,8 +204,8 @@ export const GUESTS: Guest[] = [
     roleLabel: "CO-HOST · CORE TEAM"
   },
   {
-    slug: "melly",
-    name: "Melly",
+    slug: "yuran-liu",
+    name: "Yuran Liu",
     role: "cohost",
     roleLabel: "CO-HOST · CORE TEAM"
   },
