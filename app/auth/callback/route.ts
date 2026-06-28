@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=oauth_failed", SITE_ORIGIN));
   }
 
-  const response = NextResponse.redirect(new URL("/?signed_in=1", SITE_ORIGIN));
+  const response = NextResponse.redirect(new URL("/dashboard?signed_in=1", SITE_ORIGIN));
   applySessionCookies(response, tokens);
   return response;
 }

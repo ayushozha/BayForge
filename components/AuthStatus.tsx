@@ -1,14 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type AuthUser = {
-  email?: string;
-  display_name?: string;
-};
+import type { BayForgeUser } from "@/lib/roles";
 
 export default function AuthStatus() {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<BayForgeUser | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -50,9 +46,10 @@ export default function AuthStatus() {
   const label = user.display_name || user.email || "Account";
   return (
     <span className="auth-status auth-signed-in">
-      <span className="auth-user" title={user.email}>
-        {label}
-      </span>
+      <a className="auth-user" href="/dashboard" title={user.email}>
+        <span>{label}</span>
+        <small>{user.role_label}</small>
+      </a>
       <button type="button" className="auth-signout" onClick={handleSignOut}>
         Sign out
       </button>

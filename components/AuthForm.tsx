@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { PublicSignupRole } from "@/lib/roles";
 
 type Mode = "login" | "signup";
 
@@ -14,6 +15,23 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   AUTH_OAUTH_CANCELLED: "Sign-in was cancelled.",
   provider_unavailable: "That sign-in method isn't available right now. Please use email instead.",
 };
+
+const SIGNUP_ROLES: Array<{
+  value: PublicSignupRole;
+  label: string;
+  description: string;
+}> = [
+  {
+    value: "participant",
+    label: "Participant",
+    description: "Join events, build projects, and submit work.",
+  },
+  {
+    value: "organizer",
+    label: "Organizer",
+    description: "Host events and switch into participant mode when building.",
+  },
+];
 
 function GitHubIcon() {
   return (
@@ -54,12 +72,15 @@ export default function AuthForm({ mode, initialError }: Props) {
     const displayName = String(fields.get("display_name") || "").trim();
 
     setError("");
-    setNotice(mode === "login" ? "Signing you in…" : "Creating your account…");
+    setNotice(mode === "login" ? "Signing you in..." : "Creating your account...");
     setSubmitting(true);
 
     try {
       const body: Record<string, string> = { email, password };
       if (mode === "signup" && displayName) body.display_name = displayName;
+      if (mode === "signup") {
+        body.role = String(fields.get("role") || "participant");
+      }
 
       const response = await fetch(`/api/auth/${mode}`, {
         method: "POST",
@@ -69,7 +90,7 @@ export default function AuthForm({ mode, initialError }: Props) {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        window.location.assign("/?signed_in=1");
+        window.location.assign("/dashboard?signed_in=1");
         return;
       }
       setNotice("");
@@ -111,10 +132,33 @@ export default function AuthForm({ mode, initialError }: Props) {
 
       <form className="auth-form" onSubmit={handleSubmit}>
         {mode === "signup" && (
-          <label className="auth-field">
-            <span>Name</span>
-            <input name="display_name" type="text" autoComplete="name" placeholder="Ada Lovelace" />
-          </label>
+          <>
+            <label className="auth-field">
+              <span>Name</span>
+              <input name="display_name" type="text" autoComplete="name" placeholder="Ada Lovelace" />
+            </label>
+
+            <fieldset className="auth-role-field">
+              <legend>Join as</legend>
+              <div className="auth-role-options">
+                {SIGNUP_ROLES.map((role) => (
+                  <label className="auth-role-option" key={role.value}>
+                    <input
+                      type="radio"
+                      name="role"
+                      value={role.value}
+                      defaultChecked={role.value === "participant"}
+                    />
+                    <span>
+                      <strong>{role.label}</strong>
+                      <small>{role.description}</small>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <p>Admin, super admin, and judge access is invitation-only.</p>
+            </fieldset>
+          </>
         )}
         <label className="auth-field">
           <span>Email</span>

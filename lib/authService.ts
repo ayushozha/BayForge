@@ -11,6 +11,8 @@ export const SITE_ORIGIN = process.env.SITE_ORIGIN?.trim() || "https://bayforge.
 
 export const ACCESS_COOKIE = "bf_access";
 export const REFRESH_COOKIE = "bf_refresh";
+export const ROLE_COOKIE = "bf_role";
+export const ACTIVE_VIEW_COOKIE = "bf_view";
 
 const REFRESH_MAX_AGE = 7 * 24 * 60 * 60;
 
@@ -49,7 +51,31 @@ export function applySessionCookies(response: NextResponse, tokens: AuthTokens) 
   }
 }
 
+export function applyRoleCookies(response: NextResponse, role: string, activeView?: string) {
+  response.cookies.set(ROLE_COOKIE, role, {
+    httpOnly: true,
+    secure: secureCookies,
+    sameSite: "lax",
+    path: "/",
+    domain: cookieDomain,
+    maxAge: REFRESH_MAX_AGE,
+  });
+
+  if (activeView) {
+    response.cookies.set(ACTIVE_VIEW_COOKIE, activeView, {
+      httpOnly: true,
+      secure: secureCookies,
+      sameSite: "lax",
+      path: "/",
+      domain: cookieDomain,
+      maxAge: REFRESH_MAX_AGE,
+    });
+  }
+}
+
 export function clearSessionCookies(response: NextResponse) {
   response.cookies.set(ACCESS_COOKIE, "", { httpOnly: true, path: "/", domain: cookieDomain, maxAge: 0 });
   response.cookies.set(REFRESH_COOKIE, "", { httpOnly: true, path: "/", domain: cookieDomain, maxAge: 0 });
+  response.cookies.set(ROLE_COOKIE, "", { httpOnly: true, path: "/", domain: cookieDomain, maxAge: 0 });
+  response.cookies.set(ACTIVE_VIEW_COOKIE, "", { httpOnly: true, path: "/", domain: cookieDomain, maxAge: 0 });
 }
