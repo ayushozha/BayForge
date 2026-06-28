@@ -170,14 +170,14 @@ export const GUESTS: Guest[] = [
   },
   {
     slug: "amina",
-    name: "Amina",
+    name: "Amina Ebraham",
     role: "sponsor",
     roleLabel: "SPONSOR · GROWINGPIES",
     company: "GrowingPies"
   },
   {
     slug: "amina-judge",
-    name: "Amina",
+    name: "Amina Ebraham",
     role: "judge",
     roleLabel: "HONORED JUDGE"
   },
