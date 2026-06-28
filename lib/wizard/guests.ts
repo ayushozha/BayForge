@@ -167,6 +167,13 @@ export const GUESTS: Guest[] = [
     roleLabel: "SPONSOR · REPLIT",
     company: "Replit",
     card: 23
+  },
+  {
+    slug: "amina",
+    name: "Amina",
+    role: "sponsor",
+    roleLabel: "SPONSOR · GROWINGPIES",
+    company: "GrowingPies"
   }
 ];
 
