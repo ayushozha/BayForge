@@ -59,6 +59,6 @@ export const EVENT = {
   time: "9:00 AM – 8:00 PM",
   venue: "Frontier Tower, San Francisco",
   hosts: "Bay Forge + FinChip",
-  mc: "Melly + Ayush (co-MC)",
+  mc: "Yuran Liu + Ayush Ojha (co-MC)",
   tools: "FinChip · InsForge · Nebius",
 } as const;
