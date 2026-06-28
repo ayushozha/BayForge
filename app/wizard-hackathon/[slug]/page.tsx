@@ -17,8 +17,11 @@ export async function generateMetadata({
   if (!guest) return { title: "Wizard Hackathon 2026" };
   const title = `${guest.name} · Wizard Hackathon 2026`;
   const description = `Your personalized Wizard Hackathon 2026 invitation and brief, ${guest.name}.`;
-  const image = guest.card ? `/wizard-hackathon/cards/${guest.slug}.webp` : "/wizard-hackathon/assets/cover.png";
+  const image = guest.card
+    ? `/wizard-hackathon/cards/${guest.slug}.webp`
+    : "/wizard-hackathon/assets/cover.webp";
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://bayforge.ai"),
     title,
     description,
     openGraph: { title, description, images: [image] },

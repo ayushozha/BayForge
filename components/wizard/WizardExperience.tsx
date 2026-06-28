@@ -31,7 +31,6 @@ function confirmMailto(guest: Guest): string {
 export default function WizardExperience({ guest }: { guest: Guest }) {
   const [view, setView] = useState<View>("invitation");
   const content = ROLE_CONTENT[guest.role];
-  const cardSrc = guest.card ? `/wizard-hackathon/cards/${guest.slug}.webp` : null;
   const confirmHref = confirmMailto(guest);
 
   useEffect(() => {
@@ -82,21 +81,21 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
       {view === "invitation" && (
         <section className="wz-invite-wrap">
           <div className="wz-kick-top">YOUR INVITATION</div>
-          <div className="wz-card">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/wizard-hackathon/assets/cover.png"
-              width={600}
-              height={360}
-              alt="Wizard Hackathon 2026"
-              className="wz-cover"
+
+          {/* The card: left cover panel + right personalized panel, like the printed card. */}
+          <div className="wz-card2">
+            <div
+              className="wz-card2-cover"
+              style={{ backgroundImage: "url('/wizard-hackathon/assets/cover.webp')" }}
+              role="img"
+              aria-label="Wizard Hackathon 2026"
             />
-            <div className="wz-card-body">
+            <div className="wz-card2-panel">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/wizard-hackathon/assets/crest.png"
-                width={62}
-                height={62}
+                width={48}
+                height={48}
                 alt=""
                 className="wz-crest"
               />
@@ -110,16 +109,6 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
                 <span className="wz-rolelabel">{guest.roleLabel}</span>
                 <span className="wz-line short" />
               </div>
-              {content.laurel && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src="/wizard-hackathon/assets/laurel.png"
-                  width={118}
-                  height={70}
-                  alt=""
-                  className="wz-laurel"
-                />
-              )}
               <p className="wz-msg">{fill(content.email.m1, guest)}</p>
               <p className="wz-msg">{fill(content.email.m2, guest)}</p>
               <p className="wz-msg wz-msg-accent">{fill(content.email.m3, guest)}</p>
@@ -142,14 +131,6 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
               <div className="wz-host">Hosted by Bay Forge &amp; FinChip · Frontier Tower, San Francisco</div>
             </div>
           </div>
-
-          {cardSrc && (
-            <div className="wz-yourcard">
-              <div className="wz-eyebrow center">YOUR INVITATION CARD</div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={cardSrc} alt={`${guest.name} invitation card`} className="wz-cardimg" />
-            </div>
-          )}
 
           <button className="wz-link" onClick={() => setView("details")}>
             SEE YOUR FULL BRIEF →
@@ -340,10 +321,11 @@ function WizardStyles() {
 
       .wz-invite-wrap{display:flex;flex-direction:column;align-items:center;padding:40px 20px 80px;}
       .wz-kick-top{font-weight:300;font-size:11px;letter-spacing:4px;color:#6f7798;margin-bottom:20px;}
-      .wz-card{width:600px;max-width:100%;background:#0a0a13;border:1px solid rgba(201,169,106,0.30);border-radius:16px;overflow:hidden;box-shadow:0 40px 90px -35px rgba(90,50,170,0.5);}
-      .wz-cover{display:block;width:100%;height:auto;}
-      .wz-card-body{padding:46px 54px 40px;text-align:center;background:radial-gradient(120% 60% at 50% 0%, rgba(48,34,92,0.30) 0%, rgba(10,10,19,0) 58%), #0a0a13;}
-      .wz-crest{display:block;margin:0 auto 18px;height:auto;}
+      /* two-panel card: cover art (left) + personalized panel (right) */
+      .wz-card2{display:flex;width:980px;max-width:100%;background:#0a0a13;border:1px solid rgba(201,169,106,0.30);border-radius:18px;overflow:hidden;box-shadow:0 40px 100px -38px rgba(90,50,170,0.55);}
+      .wz-card2-cover{flex:0 0 44%;background-size:cover;background-position:center;background-repeat:no-repeat;border-right:1px solid rgba(201,169,106,0.20);min-height:560px;}
+      .wz-card2-panel{flex:1;padding:48px 50px 42px;text-align:center;background:radial-gradient(120% 70% at 50% 0%, rgba(48,34,92,0.32) 0%, rgba(10,10,19,0) 60%), #0a0a13;}
+      .wz-crest{display:block;margin:0 auto 16px;height:auto;}
       .wz-eyebrow{font-weight:300;font-size:11px;letter-spacing:5px;color:#9aa2c4;}
       .wz-eyebrow.center{text-align:center;}
       .wz-eventname{font-weight:400;font-size:18px;letter-spacing:5px;margin-top:9px;background:linear-gradient(100deg,#5fd8c8 0%,#9db4ff 45%,#ff9ed0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
@@ -354,7 +336,6 @@ function WizardStyles() {
       .wz-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:52px;line-height:1.04;margin:4px 0 14px;background:linear-gradient(102deg,#7fe0ff 0%,#a7b6ff 32%,#cda6ff 60%,#ff9ed0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;filter:drop-shadow(0 0 24px rgba(150,140,255,0.35));}
       .wz-rolerow{display:flex;align-items:center;justify-content:center;gap:14px;}
       .wz-rolelabel{font-weight:400;font-size:12.5px;letter-spacing:4px;color:#aeb6d8;}
-      .wz-laurel{display:block;margin:26px auto 4px;height:auto;}
       .wz-msg{font-family:'Cormorant Garamond',serif;font-size:20px;line-height:1.55;color:#c8cee6;margin:14px 0 0;}
       .wz-msg:first-of-type{margin-top:30px;}
       .wz-msg-accent{font-style:italic;font-weight:500;background:linear-gradient(100deg,#5fd8c8 0%,#b9a6ff 50%,#ff9ed0 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
@@ -364,8 +345,6 @@ function WizardStyles() {
       .wz-cta{display:inline-block;margin-top:24px;padding:15px 40px;border:none;border-radius:999px;background:linear-gradient(100deg,#e2cf9c 0%,#c9a96a 100%);color:#0a0a13;font-family:'Jost',sans-serif;font-weight:500;letter-spacing:2.5px;font-size:12px;text-transform:uppercase;cursor:pointer;text-decoration:none;box-shadow:0 12px 34px -10px rgba(201,169,106,0.6);}
       .wz-tagline{font-weight:400;font-size:11px;letter-spacing:4px;color:#7e87ab;margin-top:34px;}
       .wz-host{font-weight:300;font-size:10.5px;letter-spacing:1px;color:#565e7d;margin-top:14px;line-height:1.7;}
-      .wz-yourcard{margin-top:40px;width:600px;max-width:100%;text-align:center;}
-      .wz-cardimg{display:block;width:100%;height:auto;border-radius:14px;margin-top:14px;border:1px solid rgba(201,169,106,0.18);}
       .wz-link{margin-top:26px;background:transparent;border:none;color:#9aa2c4;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:2px;cursor:pointer;}
 
       .wz-details{max-width:760px;margin:0 auto;padding:54px 28px 100px;}
@@ -430,8 +409,12 @@ function WizardStyles() {
       .wz-foot{margin-top:40px;text-align:center;}
       .wz-foot .wz-star{margin:30px 0 0;}
 
+      @media (max-width:820px){
+        .wz-card2{flex-direction:column;width:560px;}
+        .wz-card2-cover{flex:none;min-height:0;aspect-ratio:1000/1556;max-height:62vh;border-right:none;border-bottom:1px solid rgba(201,169,106,0.20);}
+      }
       @media (max-width:680px){
-        .wz-card-body{padding:34px 24px 30px;}
+        .wz-card2-panel{padding:34px 24px 30px;}
         .wz-name{font-size:40px;}
         .wz-details{padding:40px 18px 90px;}
         .wz-d-title{font-size:36px;}
