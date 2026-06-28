@@ -181,6 +181,18 @@ export const GUESTS: Guest[] = [
     role: "judge",
     roleLabel: "HONORED JUDGE"
   },
+  {
+    slug: "yuran-liu-judge",
+    name: "Yuran Liu",
+    role: "judge",
+    roleLabel: "HONORED JUDGE"
+  },
+  {
+    slug: "chenxi-huang",
+    name: "Chenxi Huang",
+    role: "judge",
+    roleLabel: "HONORED JUDGE"
+  },
 
   // VIPs
   {
