@@ -116,8 +116,8 @@ export const GUESTS: Guest[] = [
     card: 16
   },
   {
-    slug: "kolliakel-rupesh",
-    name: "Kolliakel Rupesh",
+    slug: "kollaikal-rupesh",
+    name: "Kollaikal Rupesh",
     role: "judge",
     roleLabel: "HONORED JUDGE",
     card: 17
