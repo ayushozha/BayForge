@@ -1,6 +1,6 @@
 // Types for the Wizard Hackathon guest experience.
 
-export type WizardRole = "judge" | "speaker-judge" | "sponsor" | "vip";
+export type WizardRole = "judge" | "speaker-judge" | "sponsor" | "vip" | "cohost";
 
 export interface Guest {
   slug: string;

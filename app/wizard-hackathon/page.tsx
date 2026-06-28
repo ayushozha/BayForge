@@ -10,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const GROUP_ORDER: { role: WizardRole; label: string }[] = [
+  { role: "cohost", label: "Co-Hosts · Core Team" },
   { role: "speaker-judge", label: "Guest Speaker & Judge" },
   { role: "sponsor", label: "Sponsors" },
   { role: "judge", label: "Honored Judges" },

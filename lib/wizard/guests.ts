@@ -174,6 +174,58 @@ export const GUESTS: Guest[] = [
     role: "sponsor",
     roleLabel: "SPONSOR · GROWINGPIES",
     company: "GrowingPies"
+  },
+  {
+    slug: "amina-judge",
+    name: "Amina",
+    role: "judge",
+    roleLabel: "HONORED JUDGE"
+  },
+
+  // VIPs
+  {
+    slug: "ari-ding",
+    name: "Ari Ding",
+    role: "vip",
+    roleLabel: "VIP ACCESS"
+  },
+  {
+    slug: "marilyn-traas",
+    name: "Marilyn Traas",
+    role: "vip",
+    roleLabel: "VIP ACCESS"
+  },
+
+  // Co-hosts / core team
+  {
+    slug: "coco",
+    name: "Coco",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "chelsey",
+    name: "Chelsey",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "gary",
+    name: "Gary",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "ayush",
+    name: "Ayush",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
+  },
+  {
+    slug: "saurabh",
+    name: "Saurabh Khire",
+    role: "cohost",
+    roleLabel: "CO-HOST · CORE TEAM"
   }
 ];
 

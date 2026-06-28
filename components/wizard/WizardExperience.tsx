@@ -83,7 +83,7 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
           <div className="wz-kick-top">YOUR INVITATION</div>
 
           {/* The card: left cover panel + right personalized panel, like the printed card. */}
-          <div className="wz-card2">
+          <div className={`wz-card2${guest.role === "cohost" ? " wz-card2-gold" : ""}`}>
             <div
               className="wz-card2-cover"
               style={{ backgroundImage: "url('/wizard-hackathon/assets/cover.webp')" }}
@@ -101,6 +101,7 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
               />
               <div className="wz-eyebrow">WELCOME TO</div>
               <div className="wz-eventname">WIZARD HACKATHON 2026</div>
+              {guest.role === "cohost" && <div className="wz-ribbon">CORE TEAM</div>}
               <Divider />
               {content.dear && <div className="wz-dear">Dear</div>}
               <div className="wz-name">{guest.name}</div>
@@ -191,6 +192,22 @@ export default function WizardExperience({ guest }: { guest: Guest }) {
           </div>
 
           {d.prep && <div className="wz-prep">{fill(d.prep, guest)}</div>}
+
+          {d.briefItems && (
+            <div className="wz-sec wz-bordered">
+              <div className="wz-sec-eyebrow">HOSTING CHECKLIST</div>
+              <div className="wz-sec-title">What you own on the day</div>
+              <div className="wz-note">{fill(d.briefNote ?? "", guest)}</div>
+              <div className="wz-stack">
+                {d.briefItems.map((b, i) => (
+                  <div key={i} className="wz-tile">
+                    <div className="wz-tile-t wz-gold-text">{b.t}</div>
+                    <div className="wz-tile-d">{fill(b.d, guest)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {d.hasInterview && d.questions && (
             <div className="wz-sec wz-bordered">
@@ -323,6 +340,8 @@ function WizardStyles() {
       .wz-kick-top{font-weight:300;font-size:11px;letter-spacing:4px;color:#6f7798;margin-bottom:20px;}
       /* two-panel card: cover art (left) + personalized panel (right) */
       .wz-card2{display:flex;width:980px;max-width:100%;background:#0a0a13;border:1px solid rgba(201,169,106,0.30);border-radius:18px;overflow:hidden;box-shadow:0 40px 100px -38px rgba(90,50,170,0.55);}
+      .wz-card2-gold{border-color:rgba(201,169,106,0.6);box-shadow:0 40px 110px -36px rgba(201,169,106,0.4), 0 0 0 1px rgba(201,169,106,0.25) inset;}
+      .wz-ribbon{display:inline-block;margin-top:16px;padding:6px 16px;border-radius:999px;background:linear-gradient(100deg,#e2cf9c,#c9a96a);color:#0a0a13;font-weight:600;font-size:10px;letter-spacing:4px;box-shadow:0 8px 22px -8px rgba(201,169,106,0.7);}
       .wz-card2-cover{flex:0 0 44%;background-size:cover;background-position:center;background-repeat:no-repeat;border-right:1px solid rgba(201,169,106,0.20);min-height:560px;}
       .wz-card2-panel{flex:1;padding:48px 50px 42px;text-align:center;background:radial-gradient(120% 70% at 50% 0%, rgba(48,34,92,0.32) 0%, rgba(10,10,19,0) 60%), #0a0a13;}
       .wz-crest{display:block;margin:0 auto 16px;height:auto;}
@@ -389,6 +408,7 @@ function WizardStyles() {
       .wz-tile-t{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;}
       .wz-teal-text{color:#9fe6da;}
       .wz-pink-text{color:#ff9ed0;}
+      .wz-gold-text{color:#e2cf9c;}
       .wz-tile-d{font-weight:300;font-size:13.5px;color:#aab3d6;line-height:1.5;margin-top:6px;}
 
       .wz-pass{margin-top:34px;display:flex;align-items:stretch;border:1px solid rgba(201,169,106,0.32);border-radius:16px;overflow:hidden;background:linear-gradient(120deg,#11101d,#0c0b16);}
