@@ -184,4 +184,52 @@ export const ROLE_CONTENT: Record<WizardRole, RoleContent> = {
       ctaPrimary: "Add VIP pass to wallet",
     },
   },
+
+  cohost: {
+    dear: false,
+    laurel: false,
+    email: {
+      m1: "The forge is yours to run.",
+      m2: "As a co-host, you set the tempo of the day — the welcome, the transitions, the energy that carries Wizard Hackathon 2026 from first light to the final reveal.",
+      m3: "Let's make it unforgettable.",
+      cta: "Open the Run of Show",
+    },
+    d: {
+      kicker: "CO-HOST · CORE TEAM",
+      title: "Your Command of the Day",
+      intro: "Everything you run, cue, and hand off on June 28 — start to close.",
+      youBadge: "YOU",
+      spotlight: {
+        tag: "YOUR ROLE",
+        time: "ALL DAY",
+        title: "Host the room · Keep the clock · Land the finale",
+        lines: [
+          "Open the ceremony and set the tone — “Enter the forge.”",
+          "MC the talks, kickoff, demos, and judging; keep every block on time",
+          "Run the closing: winners, thank-yous, and the group photo",
+        ],
+      },
+      timeline: [
+        { time: "8:00 – 9:00 AM", title: "Team Call & Room Check", desc: "Core team sync, AV / mic check, stage and signage, run-of-show walk-through.", highlight: true },
+        { time: "9:00 – 9:30 AM", title: "Welcome & Opening Ceremony", desc: "You open the show. Theme: “Enter the forge.” Hosts Bay Forge + FinChip.", highlight: true },
+        { time: "9:30 – 10:00 AM", title: "Sponsor Lightning Talks", desc: "Introduce each sponsor (~30s), keep the 5-min slots tight, manage the clock.", highlight: true },
+        { time: "10:15 – 10:35 AM", title: "Rules, Tracks & Submission Brief", desc: "Hand to Ayush for the brief; you keep time and energy in the room." },
+        { time: "10:45 AM", title: "Kickoff — Hacking Begins", desc: "The countdown moment. Big energy, official start.", highlight: true },
+        { time: "1:00 – 2:00 PM", title: "Lunch & Floor Walk", desc: "Check in with teams, sponsors, and mentors; surface any issues early." },
+        { time: "5:00 – 6:00 PM", title: "Demos & Judging — Round 1", desc: "MC the demos, enforce the timer, shepherd teams on and off stage.", highlight: true },
+        { time: "6:00 – 7:00 PM", title: "Finalist Demos & Deliberation", desc: "Run the finalist round; coordinate judges + sponsors through deliberation.", highlight: true },
+        { time: "7:00 – 8:00 PM", title: "Winners & Closing", desc: "Announce winners, thank everyone, the group photo, and wrap.", highlight: true },
+      ],
+      briefNote: "Your hosting checklist for the day:",
+      briefItems: [
+        { t: "Set the Tempo", d: "Every block starts and ends on time — you hold the clock." },
+        { t: "Smooth Handoffs", d: "Clean intros and transitions between hosts, speakers, and Ayush's brief." },
+        { t: "Read the Room", d: "Lift the energy at kickoff, demos, and the finale." },
+        { t: "Sponsor Intros", d: "A crisp ~30s intro before each of the lightning talks." },
+        { t: "Land the Close", d: "Winners, thank-yous, group photo — end on a high." },
+      ],
+      prep: "Skim the full run of show before the day, and sync with the core team on who calls each block.",
+      ctaPrimary: "Confirm co-host role",
+    },
+  },
 };
