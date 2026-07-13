@@ -24,7 +24,7 @@ function confirmMailto(guest: Guest): string {
     `Role: ${guest.roleLabel}.`,
     ``,
     `[Add any questions or scheduling notes here.]`,
-  ].join("\n");
+  ].join("\r\n");
   return `mailto:${ORGANIZER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
