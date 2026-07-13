@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 };
 
 const GROUP_ORDER: { role: BayRole; label: string }[] = [
-  { role: "cohost", label: "Co-Hosts · Core Team" },
-  { role: "speaker-judge", label: "Guest Speakers & Judges" },
-  { role: "speaker", label: "Featured Speakers" },
-  { role: "sponsor", label: "Sponsors" },
-  { role: "judge", label: "Honored Judges" },
+  { role: "cohost", label: "CO-HOSTS · CORE TEAM" },
+  { role: "speaker-judge", label: "GUEST SPEAKERS & JUDGES" },
+  { role: "speaker", label: "FEATURED SPEAKERS" },
+  { role: "sponsor", label: "SPONSORS" },
+  { role: "judge", label: "HONORED JUDGES" },
   { role: "vip", label: "VIP" },
 ];
 
@@ -22,31 +22,39 @@ export default function GuestIndex() {
   return (
     <div className="bbi-root">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Chakra+Petch:wght@300;400;500&display=swap');
-        .bbi-root{min-height:100vh;background:radial-gradient(130% 65% at 50% -10%, rgba(88,40,180,0.38) 0%, rgba(5,5,16,0) 55%), #050510;font-family:'Chakra Petch',sans-serif;color:#c8cee6;padding:64px 24px 96px;}
+        @import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Archivo:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap');
+        .bbi-root{
+          --paper:#faf8f2; --card:#fffdf8; --ink:#191734; --muted:#5d5b78; --faint:#8b89a3;
+          --cyan:#0993b8; --violet:#6d3fe0; --magenta:#d6336c;
+          --grad:linear-gradient(100deg,#0aa9cf 0%,#6d3fe0 52%,#e0447c 100%);
+          --edge:rgba(25,23,52,0.14);
+          min-height:100vh;color:var(--ink);font-family:'Archivo',sans-serif;padding:64px 24px 96px;
+          background:
+            repeating-linear-gradient(0deg, rgba(38,60,150,0.045) 0 1px, transparent 1px 28px),
+            repeating-linear-gradient(90deg, rgba(38,60,150,0.045) 0 1px, transparent 1px 28px),
+            radial-gradient(110% 55% at 50% -6%, rgba(10,169,207,0.10) 0%, rgba(250,248,242,0) 58%),
+            var(--paper);
+        }
         .bbi-wrap{max-width:1040px;margin:0 auto;}
         .bbi-head{text-align:center;margin-bottom:48px;}
-        .bbi-logochip{display:inline-block;background:#f6f4ef;border-radius:10px;padding:8px 16px;margin-bottom:18px;}
-        .bbi-logochip img{display:block;width:170px;height:auto;}
-        .bbi-eyebrow{font-weight:300;font-size:11px;letter-spacing:5px;color:#8f96bd;}
-        .bbi-title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:54px;line-height:1.05;margin:14px 0 0;background:linear-gradient(105deg,#22d3ee 0%,#818cf8 36%,#a855f7 64%,#e879f9 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
-        .bbi-tag{font-size:11px;letter-spacing:3px;color:#22d3ee;margin-top:12px;}
+        .bbi-logo{display:block;margin:0 auto 18px;width:180px;height:auto;}
+        .bbi-eyebrow{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:5px;color:var(--faint);}
+        .bbi-title{font-family:'Unbounded',sans-serif;font-weight:900;font-size:48px;line-height:1.08;margin:16px 0 0;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+        .bbi-tag{font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:3px;color:var(--cyan);margin-top:14px;}
         .bbi-group{margin-top:44px;}
-        .bbi-group-label{font-weight:500;font-size:11px;letter-spacing:4px;color:#22d3ee;margin-bottom:18px;}
+        .bbi-group-label{font-family:'Space Mono',monospace;font-weight:700;font-size:10.5px;letter-spacing:4px;color:var(--cyan);margin-bottom:18px;}
         .bbi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
-        .bbi-card{display:flex;flex-direction:column;gap:6px;padding:22px 22px 20px;background:linear-gradient(180deg,rgba(255,255,255,0.025),rgba(255,255,255,0.008));border:1px solid rgba(168,85,247,0.28);border-radius:14px;transition:transform .16s ease,border-color .16s ease;text-decoration:none;}
-        .bbi-card:hover{transform:translateY(-3px);border-color:rgba(34,211,238,0.6);}
-        .bbi-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:24px;line-height:1.1;background:linear-gradient(102deg,#22d3ee 0%,#818cf8 38%,#a855f7 66%,#e879f9 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
-        .bbi-role{font-size:10.5px;letter-spacing:2.5px;color:#aeb6d8;}
-        .bbi-open{font-weight:500;font-size:10.5px;letter-spacing:2px;color:#22d3ee;margin-top:6px;}
-        @media (max-width:680px){.bbi-title{font-size:40px;}}
+        .bbi-card{display:flex;flex-direction:column;gap:6px;padding:22px 22px 20px;background:var(--card);border:1.5px solid var(--ink);border-radius:12px;box-shadow:4px 4px 0 rgba(25,23,52,0.10);transition:transform .15s ease,box-shadow .15s ease;text-decoration:none;}
+        .bbi-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 rgba(10,169,207,0.28);}
+        .bbi-name{font-family:'Unbounded',sans-serif;font-weight:700;font-size:19px;line-height:1.2;color:var(--ink);}
+        .bbi-role{font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:2px;color:var(--muted);}
+        .bbi-open{font-family:'Space Mono',monospace;font-weight:700;font-size:10px;letter-spacing:2px;margin-top:8px;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
+        @media (max-width:680px){.bbi-title{font-size:34px;}}
       `}</style>
       <div className="bbi-wrap">
         <div className="bbi-head">
-          <div className="bbi-logochip">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/bay-builders-hackathon/assets/brand-logo.png" alt="BayForge" />
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="bbi-logo" src="/bay-builders-hackathon/assets/brand-logo.png" alt="BayForge" />
           <div className="bbi-eyebrow">BAY BUILDERS HACKATHON · GUESTS</div>
           <div className="bbi-title">The people of the build</div>
           <div className="bbi-tag">▸▸▸ BUILD YOUR OWN AI ORGANIZATION ◂◂◂</div>
