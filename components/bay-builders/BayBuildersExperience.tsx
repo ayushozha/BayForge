@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import type { Guest } from "@/lib/bay-builders/types";
