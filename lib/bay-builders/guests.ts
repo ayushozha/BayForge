@@ -23,6 +23,7 @@ export const GUESTS: Guest[] = [
   { slug: "paramita-banik", name: "Paramita Banik", role: "judge", roleLabel: "HONORED JUDGE", company: "AIxccelerate" },
   { slug: "yuran-liu-judge", name: "Yuran Liu", role: "judge", roleLabel: "HONORED JUDGE", company: "AGI Summit · Bay AI Circle" },
   { slug: "chenxi-huang-judge", name: "Chenxi Huang", role: "judge", roleLabel: "HONORED JUDGE", company: "FinChip" },
+  { slug: "coco-judge", name: "Coco Wang", role: "judge", roleLabel: "HONORED JUDGE", company: "FinChip" },
 
   { slug: "amitabh-das", name: "Amitabh Das", role: "speaker-judge", roleLabel: "GUEST SPEAKER & JUDGE", company: "AgentOS", talk: "AgentOS — AI Agent Operating System · 10:07 AM" },
   { slug: "wei-dou", name: "Wei Dou", role: "speaker-judge", roleLabel: "GUEST SPEAKER & JUDGE", company: "InsForge", talk: "InsForge — Agent-native backend · 10:12 AM" },
@@ -38,7 +39,7 @@ export const GUESTS: Guest[] = [
   { slug: "tony-chang", name: "Tony Chang", role: "sponsor", roleLabel: "SPONSOR · INSFORGE", company: "InsForge" },
   { slug: "ivar-guerrero", name: "Ivar Guerrero", role: "sponsor", roleLabel: "SPONSOR · TAVILY", company: "Tavily" },
 
-  { slug: "coco", name: "Coco", role: "cohost", roleLabel: "CO-HOST · CORE TEAM", company: "FinChip" },
+  { slug: "coco", name: "Coco Wang", role: "cohost", roleLabel: "CO-HOST · CORE TEAM", company: "FinChip" },
   { slug: "chenxi-huang", name: "Chenxi Huang", role: "cohost", roleLabel: "CO-HOST · CORE TEAM", company: "FinChip" },
   { slug: "gary", name: "Gary", role: "cohost", roleLabel: "CO-HOST · CORE TEAM", company: "FinChip", talk: "FinChip · 11:00 AM" },
   { slug: "saurabh-khire", name: "Saurabh Khire", role: "cohost", roleLabel: "CO-HOST · CORE TEAM", company: "Crewbase Collective", talk: "About Crewbase · 10:05 AM + Govia · 10:17 AM + Rules & Tracks · 11:05 AM" },
