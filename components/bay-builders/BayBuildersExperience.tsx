@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import type { Guest } from "@/lib/bay-builders/types";
 import { EVENT } from "@/lib/bay-builders/types";
 import { ROLE_CONTENT } from "@/lib/bay-builders/content";
@@ -24,7 +25,7 @@ function confirmMailto(guest: Guest): string {
     `Role: ${guest.roleLabel}.`,
     ``,
     `[Add any questions or scheduling notes here.]`,
-  ].join("\n");
+  ].join("\r\n");
   return `mailto:${ORGANIZER_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -67,9 +68,9 @@ export default function BayBuildersExperience({ guest }: { guest: Guest }) {
 
       {/* top bar */}
       <div className="bb-bar">
-        <a href="/bay-builders-hackathon" className="bb-pill-btn">
+        <Link href="/bay-builders-hackathon" className="bb-pill-btn">
           ← ALL GUESTS
-        </a>
+        </Link>
         <div className="bb-bar-brand">
           <span className="bb-node" />
           <span>BAY BUILDERS HACKATHON</span>
