@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
 import type { Guest } from "@/lib/bay-builders/types";
 import { EVENT } from "@/lib/bay-builders/types";
 import { ROLE_CONTENT } from "@/lib/bay-builders/content";
