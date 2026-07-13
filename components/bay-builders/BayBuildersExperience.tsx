@@ -57,9 +57,9 @@ export default function BayBuildersExperience({ guest }: { guest: Guest }) {
 
       {/* top bar */}
       <div className="bb-bar">
-        <a href="/bay-builders-hackathon" className="bb-pill-btn">
+        <Link href="/bay-builders-hackathon" className="bb-pill-btn">
           ← ALL GUESTS
-        </a>
+        </Link>
         <div className="bb-bar-brand">
           <span className="bb-node" />
           <span>BAY BUILDERS HACKATHON</span>
