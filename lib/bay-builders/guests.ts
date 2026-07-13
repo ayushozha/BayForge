@@ -21,6 +21,8 @@ export const GUESTS: Guest[] = [
   { slug: "elaine-h", name: "Elaine H", role: "judge", roleLabel: "HONORED JUDGE", company: "Clera" },
   { slug: "can-lyu", name: "Can Lyu", role: "judge", roleLabel: "HONORED JUDGE", company: "InsForge" },
   { slug: "paramita-banik", name: "Paramita Banik", role: "judge", roleLabel: "HONORED JUDGE", company: "AIxccelerate" },
+  { slug: "yuran-liu-judge", name: "Yuran Liu", role: "judge", roleLabel: "HONORED JUDGE", company: "AGI Summit · Bay AI Circle" },
+  { slug: "chenxi-huang-judge", name: "Chenxi Huang", role: "judge", roleLabel: "HONORED JUDGE", company: "FinChip" },
 
   { slug: "amitabh-das", name: "Amitabh Das", role: "speaker-judge", roleLabel: "GUEST SPEAKER & JUDGE", company: "AgentOS", talk: "AgentOS — AI Agent Operating System · 10:07 AM" },
   { slug: "wei-dou", name: "Wei Dou", role: "speaker-judge", roleLabel: "GUEST SPEAKER & JUDGE", company: "InsForge", talk: "InsForge — Agent-native backend · 10:12 AM" },
