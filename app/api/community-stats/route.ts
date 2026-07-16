@@ -34,10 +34,13 @@ export async function GET() {
       });
     }
 
+    const displayOffset = parseInt(process.env.SUBSCRIBER_COUNT_DISPLAY_OFFSET ?? "0", 10) || 0;
+    const displayTotal = typeof stats.total === "number" ? stats.total + displayOffset : null;
+
     return NextResponse.json({
       configured: true,
       source,
-      total: stats.total,
+      total: displayTotal,
       collegesRepresented: stats.collegesRepresented,
       collegesSource: stats.collegesSource,
       eventsHosted,

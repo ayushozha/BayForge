@@ -2,19 +2,19 @@ const RESEND_API_URL = "https://api.resend.com/emails";
 
 const resendApiKey = process.env.RESEND_API_KEY?.trim() || "";
 
-// Until bayforge.events is verified in the Resend account, only
-// onboarding@resend.dev can be used as the sender (and Resend only delivers
-// to the account owner's address). Switch EMAIL_FROM to a bayforge.events
-// address once the domain is verified.
 export const emailFrom = process.env.EMAIL_FROM?.trim() || "Bay Forge <onboarding@resend.dev>";
 
-const notifyEmail = process.env.NOTIFY_EMAIL?.trim() || "outreach@bayforge.events";
+// Supports comma or semicolon-separated list of addresses (e.g. "a@b.com,c@d.com")
+const rawNotifyEmail = process.env.NOTIFY_EMAIL?.trim() || "outreach@bayforge.ai";
+const notifyEmail: string | string[] = /[,;]/.test(rawNotifyEmail)
+  ? rawNotifyEmail.split(/[,;]/).map((e) => e.trim()).filter(Boolean)
+  : rawNotifyEmail;
 
-// Matches bayforge.events and any subdomain (e.g. updates.bayforge.events).
-const senderDomainVerified = /@(?:[a-z0-9-]+\.)*bayforge\.events>?$/i.test(emailFrom);
+// Matches bayforge.events and bayforge.ai (and their subdomains)
+const senderDomainVerified = /@(?:[a-z0-9-]+\.)*bayforge\.(events|ai)>?$/i.test(emailFrom);
 
 type SendArgs = {
-  to: string;
+  to: string | string[];
   subject: string;
   html: string;
   replyTo?: string;
@@ -39,14 +39,17 @@ export async function sendEmail({ to, subject, html, replyTo }: SendArgs): Promi
     });
     if (!response.ok) {
       const detail = await response.text().catch(() => "");
-      console.error(`[email] send to ${to} failed (${response.status}): ${detail.slice(0, 200)}`);
+      const toStr = Array.isArray(to) ? to.join(", ") : to;
+      console.error(`[email] send to ${toStr} failed (${response.status}): ${detail.slice(0, 200)}`);
       return false;
     }
     const data = (await response.json().catch(() => ({}))) as { id?: string };
-    console.log(`[email] sent ${data.id ?? "?"} to ${to} (${subject})`);
+    const toStr = Array.isArray(to) ? to.join(", ") : to;
+    console.log(`[email] sent ${data.id ?? "?"} to ${toStr} (${subject})`);
     return true;
   } catch (err) {
-    console.error(`[email] send to ${to} errored:`, err);
+    const toStr = Array.isArray(to) ? to.join(", ") : to;
+    console.error(`[email] send to ${toStr} errored:`, err);
     return false;
   }
 }
@@ -69,7 +72,7 @@ export function sendWelcomeEmail(email: string): void {
   void sendEmail({
     to: email,
     subject: "Welcome to Bay Forge",
-    replyTo: notifyEmail,
+    replyTo: Array.isArray(notifyEmail) ? notifyEmail[0] : notifyEmail,
     html: [
       "<div style=\"font-family:Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;color:#1a1a2e\">",
       "<h2 style=\"margin:0 0 12px\">You're on the Bay Forge list</h2>",

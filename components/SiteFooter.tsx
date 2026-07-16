@@ -1,6 +1,11 @@
 import BrandSymbol from "./BrandSymbol";
 import CurrentYear from "./CurrentYear";
 
+const contactEmails = (process.env.NEXT_PUBLIC_CONTACT_EMAIL || "outreach@bayforge.events")
+  .split(",")
+  .map((e) => e.trim())
+  .filter(Boolean);
+
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
@@ -35,7 +40,9 @@ export default function SiteFooter() {
         <div className="footer-links">
           <h3>Location</h3>
           <p>Bay Area, California</p>
-          <a href="mailto:outreach@bayforge.events">outreach@bayforge.events</a>
+          {contactEmails.map((email) => (
+            <a key={email} href={`mailto:${email}`}>{email}</a>
+          ))}
         </div>
       </div>
       <p className="copyright">

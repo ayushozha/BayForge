@@ -64,7 +64,12 @@ export function CommunityCountProvider({ children }: { children: React.ReactNode
     };
   }, [applyTotal]);
 
-  const label = count === null ? "..." : count.toLocaleString("en-US");
+  const label =
+    count === null
+      ? "..."
+      : count >= 1_000
+        ? Math.floor(count / 1_000) + "k+"
+        : count.toLocaleString("en-US");
   const collegesLabel =
     collegesRepresented === null ? "..." : collegesRepresented.toLocaleString("en-US");
   const eventsLabel = eventsHosted === null ? "..." : eventsHosted.toLocaleString("en-US");
