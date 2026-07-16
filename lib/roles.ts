@@ -13,10 +13,19 @@ export type RoleProfile = {
 
 export type BayForgeUser = Record<string, unknown> & {
   id?: string;
+  sub?: string;
+  user_id?: string;
   email?: string;
   display_name?: string;
   name?: string;
 } & RoleProfile;
+
+export type BayForgeSessionUser = RoleProfile & {
+  id?: string;
+  email?: string;
+  display_name?: string;
+  name?: string;
+};
 
 const ROLE_LABELS: Record<SystemRole, string> = {
   super_admin: "Super admin",
@@ -94,12 +103,12 @@ export function parseSystemRole(value: unknown): SystemRole | null {
   }
 
   if (isRecord(value)) {
-    return (
-      parseSystemRole(value.role) ??
-      parseSystemRole(value.name) ??
-      parseSystemRole(value.key) ??
-      parseSystemRole(value.slug)
-    );
+    for (const candidate of [value.role, value.name, value.key, value.slug]) {
+      if (typeof candidate === "string") {
+        const role = parseSystemRole(candidate);
+        if (role) return role;
+      }
+    }
   }
 
   return null;
@@ -122,6 +131,19 @@ export function sanitizePublicSignupRole(value: unknown): PublicSignupRole {
 
 export function isInviteOnlyRole(role: SystemRole | null): boolean {
   return role ? INVITE_ONLY_ROLES.has(role) : false;
+}
+
+export function collectRequestedSignupRoles(body: Record<string, unknown>): SystemRole[] {
+  return collectExplicitRoles(body);
+}
+
+export function sanitizeSignupRolePayload(
+  body: Record<string, unknown>,
+  signupRole: PublicSignupRole
+): Record<string, unknown> {
+  const cleanBody = stripRoleFields(body);
+  cleanBody.role = signupRole;
+  return cleanBody;
 }
 
 export function decorateUserWithRoles(
@@ -166,6 +188,28 @@ export function getRoleLabel(role: SystemRole): string {
   return ROLE_LABELS[role];
 }
 
+export function canAccessRoleView(
+  user: Pick<RoleProfile, "available_views">,
+  view: RoleView
+): boolean {
+  return user.available_views.includes(view);
+}
+
+export function toSessionUser(user: BayForgeUser): BayForgeSessionUser {
+  return {
+    id: firstString(user.id, user.user_id, user.sub),
+    email: firstString(user.email),
+    display_name: firstString(user.display_name),
+    name: firstString(user.name),
+    role: user.role,
+    roles: user.roles,
+    active_view: user.active_view,
+    available_views: user.available_views,
+    role_label: user.role_label,
+    invite_only: user.invite_only,
+  };
+}
+
 function collectExplicitRoles(record: Record<string, unknown>, depth = 0): SystemRole[] {
   const roles: SystemRole[] = [];
 
@@ -177,7 +221,7 @@ function collectExplicitRoles(record: Record<string, unknown>, depth = 0): Syste
     addRoleValues(roles, record[field]);
   }
 
-  if (depth < 1) {
+  if (depth < 3) {
     for (const field of NESTED_ROLE_FIELDS) {
       const nested = record[field];
       if (isRecord(nested)) {
@@ -187,6 +231,26 @@ function collectExplicitRoles(record: Record<string, unknown>, depth = 0): Syste
   }
 
   return uniqueRoles(roles);
+}
+
+function stripRoleFields(body: Record<string, unknown>): Record<string, unknown> {
+  const cleanBody: Record<string, unknown> = { ...body };
+
+  for (const field of DIRECT_ROLE_FIELDS) {
+    delete cleanBody[field];
+  }
+  for (const field of ROLE_LIST_FIELDS) {
+    delete cleanBody[field];
+  }
+
+  for (const field of NESTED_ROLE_FIELDS) {
+    const nested = cleanBody[field];
+    if (isRecord(nested)) {
+      cleanBody[field] = stripRoleFields(nested);
+    }
+  }
+
+  return cleanBody;
 }
 
 function addRoleValues(target: SystemRole[], value: unknown) {
@@ -248,6 +312,12 @@ function uniqueViews(views: RoleView[]): RoleView[] {
     }
   }
   return unique;
+}
+
+function firstString(...values: unknown[]): string | undefined {
+  return values.find(
+    (value): value is string => typeof value === "string" && value.trim().length > 0
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

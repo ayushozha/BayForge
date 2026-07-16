@@ -8,6 +8,7 @@ type Mode = "login" | "signup";
 type Props = {
   mode: Mode;
   initialError?: string;
+  returnTo?: string;
 };
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
@@ -56,7 +57,7 @@ function GoogleIcon() {
   );
 }
 
-export default function AuthForm({ mode, initialError }: Props) {
+export default function AuthForm({ mode, initialError, returnTo }: Props) {
   const [error, setError] = useState(
     initialError ? OAUTH_ERROR_MESSAGES[initialError] || "Sign-in failed. Please try again." : ""
   );
@@ -90,7 +91,9 @@ export default function AuthForm({ mode, initialError }: Props) {
       const data = await response.json().catch(() => ({}));
 
       if (response.ok) {
-        window.location.assign("/dashboard?signed_in=1");
+        const destination =
+          mode === "login" && returnTo ? returnTo : "/dashboard";
+        window.location.assign(destination);
         return;
       }
       setNotice("");

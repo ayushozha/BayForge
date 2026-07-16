@@ -4,49 +4,42 @@ import {
   ACTIVE_VIEW_COOKIE,
   AUTH_SERVICE_URL,
   REFRESH_COOKIE,
-  ROLE_COOKIE,
   SITE_ORIGIN,
-  applyRoleCookies,
+  applyActiveViewCookie,
   applySessionCookies,
   authApiKey,
   clearSessionCookies,
 } from "@/lib/authService";
+import { loginPath, safeReturnPath } from "@/lib/authRedirect";
 import {
+  collectRequestedSignupRoles,
   decorateUserWithRoles,
   isInviteOnlyRole,
   parsePublicSignupRole,
-  parseSystemRole,
   sanitizePublicSignupRole,
+  sanitizeSignupRolePayload,
+  toSessionUser,
+  type BayForgeSessionUser,
   type PublicSignupRole,
-  type SystemRole,
 } from "@/lib/roles";
+import {
+  fetchAuthUser,
+  normalizeTrustedAuthUser,
+} from "@/lib/server/authUpstream";
 
-// Server-side proxy to the shared auth service. The X-API-Key never reaches
-// the browser, and tokens live only in httpOnly cookies on this domain.
+// Server-side proxy to the shared auth service. The API key never reaches
+// the browser, and tokens live only in HttpOnly cookies on this domain.
 
 const SESSION_PATHS = new Set(["login", "signup", "refresh"]);
-const SIGNUP_ROLE_FIELDS = [
-  "role",
-  "primary_role",
-  "primaryRole",
-  "user_role",
-  "userRole",
-  "account_type",
-  "accountType",
-  "bayforge_role",
-  "bayforgeRole",
-];
-const SIGNUP_ROLE_LIST_FIELDS = ["roles", "available_roles", "availableRoles", "bayforge_roles", "bayforgeRoles"];
-const SIGNUP_NESTED_ROLE_FIELDS = [
-  "metadata",
-  "profile",
-  "app_metadata",
-  "appMetadata",
-  "user_metadata",
-  "userMetadata",
-  "custom_claims",
-  "customClaims",
-];
+const AUTH_TIMEOUT_MS = 8_000;
+
+type AuthTokens = {
+  access_token?: string;
+  refresh_token?: string;
+  expires_in?: number;
+  requires_2fa?: boolean;
+  user?: unknown;
+};
 
 export async function GET(
   req: NextRequest,
@@ -55,12 +48,9 @@ export async function GET(
   const { proxy } = await params;
   const path = proxy.join("/");
 
-  if (path.startsWith("oauth/")) {
-    return beginOAuth(req, path);
-  }
-  if (path === "me") {
-    return getMe(req);
-  }
+  if (path === "session/refresh") return refreshSession(req);
+  if (path.startsWith("oauth/")) return beginOAuth(req, path);
+  if (path === "me") return getMe(req);
   return forward(req, path);
 }
 
@@ -71,9 +61,7 @@ export async function POST(
   const { proxy } = await params;
   const path = proxy.join("/");
 
-  if (path === "logout") {
-    return logout(req);
-  }
+  if (path === "logout") return logout(req);
 
   let body: Record<string, unknown> = {};
   try {
@@ -84,7 +72,7 @@ export async function POST(
 
   let signupRole: PublicSignupRole | undefined;
   if (path === "signup") {
-    const requestedRoles = findRequestedSignupRoles(body);
+    const requestedRoles = collectRequestedSignupRoles(body);
     if (requestedRoles.some((role) => isInviteOnlyRole(role))) {
       return NextResponse.json(
         { error: "That role requires an invitation." },
@@ -109,144 +97,186 @@ export async function POST(
     }
   }
 
-  const upstream = await postToAuthService(req, path, body);
-
-  const data = await upstream.json().catch(() => ({}));
-
-  if (upstream.ok && SESSION_PATHS.has(path)) {
-    const user = decorateUserWithRoles(
-      data.user ?? null,
-      signupRole ?? req.cookies.get(ROLE_COOKIE)?.value,
-      req.cookies.get(ACTIVE_VIEW_COOKIE)?.value
+  let upstream: Response;
+  try {
+    upstream = await postToAuthService(req, path, body);
+  } catch {
+    return NextResponse.json(
+      { error: "Authentication service unavailable." },
+      { status: 503 }
     );
-    const response = NextResponse.json(
-      { user, requires_2fa: data.requires_2fa ?? false },
-      { status: upstream.status }
-    );
-    applySessionCookies(response, data);
-    if (signupRole) {
-      applyRoleCookies(
-        response,
-        signupRole,
-        signupRole === "organizer" ? "organizer" : "participant"
-      );
-    }
-    return response;
   }
 
-  return NextResponse.json(data, { status: upstream.status });
+  const data = await upstream.json().catch(() => ({}));
+  if (!upstream.ok || !SESSION_PATHS.has(path)) {
+    return NextResponse.json(data, { status: upstream.status });
+  }
+
+  const preferredView = req.cookies.get(ACTIVE_VIEW_COOKIE)?.value;
+  const user = sessionUserFromPayload(data, signupRole, preferredView);
+  const response = NextResponse.json(
+    { user, requires_2fa: data.requires_2fa ?? false },
+    { status: upstream.status }
+  );
+
+  applySessionCookies(response, data);
+  if (user) {
+    applyActiveViewCookie(response, user.active_view);
+  } else if (signupRole) {
+    applyActiveViewCookie(response, signupRole);
+  }
+  return response;
 }
 
 async function beginOAuth(req: NextRequest, path: string): Promise<NextResponse> {
   const url = new URL(`${AUTH_SERVICE_URL}/api/auth/${path}`);
   req.nextUrl.searchParams.forEach((value, key) => url.searchParams.set(key, value));
-  // Token session mode makes the auth service include the refresh token in
-  // the redirect-code payload so /auth/callback can set our own cookies.
   url.searchParams.set("session_mode", "token");
 
-  const upstream = await fetch(url, {
-    headers: { "X-API-Key": authApiKey },
-    redirect: "manual",
-  });
-
-  const location = upstream.headers.get("location");
-  if (location && upstream.status >= 300 && upstream.status < 400) {
-    return NextResponse.redirect(location, 302);
+  try {
+    const upstream = await fetch(url, {
+      headers: { "X-API-Key": authApiKey },
+      redirect: "manual",
+      signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+    });
+    const location = upstream.headers.get("location");
+    if (location && upstream.status >= 300 && upstream.status < 400) {
+      return NextResponse.redirect(location, 302);
+    }
+  } catch {
+    // Fall through to the readable login error below.
   }
-  // Provider not configured (or other begin failure): bounce back to the
-  // login page with a readable error instead of surfacing raw JSON.
-  return NextResponse.redirect(new URL("/login?error=provider_unavailable", SITE_ORIGIN), 302);
+
+  return NextResponse.redirect(
+    new URL("/login?error=provider_unavailable", siteUrl(req)),
+    302
+  );
 }
 
 async function getMe(req: NextRequest): Promise<NextResponse> {
-  const access = req.cookies.get(ACCESS_COOKIE)?.value;
-  const refresh = req.cookies.get(REFRESH_COOKIE)?.value;
-  if (!access && !refresh) {
+  const accessToken = req.cookies.get(ACCESS_COOKIE)?.value;
+  const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value;
+  const preferredView = req.cookies.get(ACTIVE_VIEW_COOKIE)?.value;
+
+  if (!accessToken && !refreshToken) {
     return NextResponse.json({ user: null }, { status: 200 });
   }
 
-  if (access) {
-    const upstream = await fetchMe(access);
-    if (upstream.ok) {
-      return NextResponse.json(normalizeUser(await upstream.json(), req), { status: 200 });
-    }
-    if (upstream.status !== 401 || !refresh) {
-      return NextResponse.json({ user: null }, { status: 200 });
+  if (accessToken) {
+    try {
+      const result = await fetchAuthUser(accessToken, preferredView);
+      if (result.response.ok) {
+        return NextResponse.json({ user: result.user }, { status: 200 });
+      }
+      if (result.response.status !== 401) {
+        return NextResponse.json(
+          { error: "Authentication service unavailable." },
+          { status: 503 }
+        );
+      }
+    } catch {
+      return NextResponse.json(
+        { error: "Authentication service unavailable." },
+        { status: 503 }
+      );
     }
   }
 
-  // Access token missing or expired — try one silent refresh.
-  const refreshed = await fetch(`${AUTH_SERVICE_URL}/api/auth/refresh`, {
-    method: "POST",
-    headers: { "X-API-Key": authApiKey, "Content-Type": "application/json" },
-    body: JSON.stringify({ token_transport: "json", refresh_token: refresh }),
-  });
-  if (!refreshed.ok) {
+  if (!refreshToken) {
     const response = NextResponse.json({ user: null }, { status: 200 });
     clearSessionCookies(response);
     return response;
   }
-  const tokens = await refreshed.json().catch(() => ({}));
-  const retried = tokens.access_token ? await fetchMe(tokens.access_token) : null;
-  const payload =
-    retried && retried.ok
-      ? normalizeUser(await retried.json(), req)
-      : {
-          user: decorateUserWithRoles(
-            tokens.user ?? null,
-            req.cookies.get(ROLE_COOKIE)?.value,
-            req.cookies.get(ACTIVE_VIEW_COOKIE)?.value
-          ),
-        };
-  const response = NextResponse.json(payload, { status: 200 });
-  applySessionCookies(response, tokens);
+
+  const refreshed = await refreshWithToken(refreshToken, preferredView);
+  if (!refreshed) {
+    const response = NextResponse.json({ user: null }, { status: 200 });
+    clearSessionCookies(response);
+    return response;
+  }
+
+  const response = NextResponse.json({ user: refreshed.user }, { status: 200 });
+  applySessionCookies(response, refreshed.tokens);
+  if (refreshed.user) {
+    applyActiveViewCookie(response, refreshed.user.active_view);
+  }
   return response;
 }
 
-// The auth service's /me returns the user object at the top level; the
-// frontend always consumes { user: ... }.
-function normalizeUser(data: Record<string, unknown>, req: NextRequest): { user: unknown } {
-  const fallbackRole = req.cookies.get(ROLE_COOKIE)?.value;
+async function refreshSession(req: NextRequest): Promise<NextResponse> {
+  const returnTo = safeReturnPath(req.nextUrl.searchParams.get("next"));
+  const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value;
   const preferredView = req.cookies.get(ACTIVE_VIEW_COOKIE)?.value;
-  if (data && typeof data === "object" && "user" in data) {
-    return {
-      user: decorateUserWithRoles(
-        (data as { user: unknown }).user,
-        fallbackRole,
-        preferredView
-      ),
-    };
+
+  if (!refreshToken) return clearAndRedirect(req, returnTo);
+
+  const refreshed = await refreshWithToken(refreshToken, preferredView);
+  if (!refreshed?.tokens.access_token || !refreshed.user) {
+    return clearAndRedirect(req, returnTo);
   }
-  return {
-    user: decorateUserWithRoles(
-      data && typeof data === "object" && "id" in data ? data : null,
-      fallbackRole,
-      preferredView
-    ),
-  };
+
+  const response = NextResponse.redirect(new URL(returnTo, siteUrl(req)), 303);
+  applySessionCookies(response, refreshed.tokens);
+  applyActiveViewCookie(response, refreshed.user.active_view);
+  return response;
 }
 
-async function fetchMe(accessToken: string): Promise<Response> {
-  return fetch(`${AUTH_SERVICE_URL}/api/auth/me`, {
-    headers: {
-      "X-API-Key": authApiKey,
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+async function refreshWithToken(
+  refreshToken: string,
+  preferredView?: unknown
+): Promise<{ tokens: AuthTokens; user: BayForgeSessionUser | null } | null> {
+  let response: Response;
+  try {
+    response = await fetch(`${AUTH_SERVICE_URL}/api/auth/refresh`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "X-API-Key": authApiKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token_transport: "json",
+        refresh_token: refreshToken,
+      }),
+      signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+    });
+  } catch {
+    return null;
+  }
+
+  if (!response.ok) return null;
+  const tokens = (await response.json().catch(() => ({}))) as AuthTokens;
+  let user = normalizeTrustedAuthUser(tokens.user, preferredView);
+
+  if (!user && tokens.access_token) {
+    try {
+      const result = await fetchAuthUser(tokens.access_token, preferredView);
+      if (result.response.ok) user = result.user;
+    } catch {
+      return null;
+    }
+  }
+
+  return { tokens, user };
 }
 
 async function logout(req: NextRequest): Promise<NextResponse> {
-  const access = req.cookies.get(ACCESS_COOKIE)?.value;
-  const refresh = req.cookies.get(REFRESH_COOKIE)?.value;
+  const accessToken = req.cookies.get(ACCESS_COOKIE)?.value;
+  const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value;
 
-  if (access || refresh) {
+  if (accessToken || refreshToken) {
     await fetch(`${AUTH_SERVICE_URL}/api/auth/logout`, {
       method: "POST",
       headers: {
         ...upstreamHeaders(req),
-        ...(access ? { Authorization: `Bearer ${access}` } : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      body: JSON.stringify(refresh ? { refresh_token: refresh, token_transport: "json" } : {}),
+      body: JSON.stringify(
+        refreshToken
+          ? { refresh_token: refreshToken, token_transport: "json" }
+          : {}
+      ),
+      signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
     }).catch(() => null);
   }
 
@@ -258,12 +288,26 @@ async function logout(req: NextRequest): Promise<NextResponse> {
 async function forward(req: NextRequest, path: string): Promise<NextResponse> {
   const url = new URL(`${AUTH_SERVICE_URL}/api/auth/${path}`);
   req.nextUrl.searchParams.forEach((value, key) => url.searchParams.set(key, value));
-  const upstream = await fetch(url, { headers: upstreamHeaders(req) });
-  const data = await upstream.text();
-  return new NextResponse(data, {
-    status: upstream.status,
-    headers: { "Content-Type": upstream.headers.get("Content-Type") || "application/json" },
-  });
+
+  try {
+    const upstream = await fetch(url, {
+      headers: upstreamHeaders(req),
+      signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
+    });
+    const data = await upstream.text();
+    return new NextResponse(data, {
+      status: upstream.status,
+      headers: {
+        "Content-Type":
+          upstream.headers.get("Content-Type") || "application/json",
+      },
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Authentication service unavailable." },
+      { status: 503 }
+    );
+  }
 }
 
 function upstreamHeaders(req: NextRequest): Record<string, string> {
@@ -285,64 +329,41 @@ function postToAuthService(
     method: "POST",
     headers: upstreamHeaders(req),
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(AUTH_TIMEOUT_MS),
   });
 }
 
-function findRequestedSignupRoles(body: Record<string, unknown>): SystemRole[] {
-  const roles: SystemRole[] = [];
-
-  for (const field of SIGNUP_ROLE_FIELDS) {
-    const role = parseSystemRole(body[field]);
-    if (role) roles.push(role);
-  }
-
-  for (const field of SIGNUP_ROLE_LIST_FIELDS) {
-    const value = body[field];
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        const role = parseSystemRole(item);
-        if (role) roles.push(role);
-      }
-    }
-  }
-
-  for (const field of SIGNUP_NESTED_ROLE_FIELDS) {
-    const nested = body[field];
-    if (isRecord(nested)) {
-      roles.push(...findRequestedSignupRoles(nested));
-    }
-  }
-
-  return roles;
+function sessionUserFromPayload(
+  payload: unknown,
+  signupRole?: PublicSignupRole,
+  preferredView?: unknown
+): BayForgeSessionUser | null {
+  if (!isRecord(payload)) return null;
+  const rawUser = payload.user ?? null;
+  const decorated = decorateUserWithRoles(
+    rawUser,
+    signupRole,
+    preferredView
+  );
+  return decorated ? toSessionUser(decorated) : null;
 }
 
-function sanitizeSignupRolePayload(
-  body: Record<string, unknown>,
-  signupRole: PublicSignupRole
-): Record<string, unknown> {
-  const cleanBody = stripSignupRoleFields(body);
-  cleanBody.role = signupRole;
-  return cleanBody;
+function clearAndRedirect(
+  req: NextRequest,
+  returnTo: string
+): NextResponse {
+  const response = NextResponse.redirect(
+    new URL(loginPath(returnTo), siteUrl(req)),
+    303
+  );
+  clearSessionCookies(response);
+  return response;
 }
 
-function stripSignupRoleFields(body: Record<string, unknown>): Record<string, unknown> {
-  const cleanBody: Record<string, unknown> = { ...body };
-
-  for (const field of SIGNUP_ROLE_FIELDS) {
-    delete cleanBody[field];
-  }
-  for (const field of SIGNUP_ROLE_LIST_FIELDS) {
-    delete cleanBody[field];
-  }
-
-  for (const field of SIGNUP_NESTED_ROLE_FIELDS) {
-    const nested = cleanBody[field];
-    if (isRecord(nested)) {
-      cleanBody[field] = stripSignupRoleFields(nested);
-    }
-  }
-
-  return cleanBody;
+function siteUrl(req: NextRequest): string {
+  return process.env.NODE_ENV === "production"
+    ? SITE_ORIGIN
+    : req.nextUrl.origin;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

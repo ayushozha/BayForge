@@ -3,6 +3,7 @@
 node_modules/
 npm-debug.log*
 .next/
+.test-dist/
 out/
 next-env.d.ts
 *.tsbuildinfo
