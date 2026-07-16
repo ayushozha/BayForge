@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { BayForgeUser } from "@/lib/roles";
+import type { BayForgeSessionUser } from "@/lib/roles";
 
 export default function AuthStatus() {
-  const [user, setUser] = useState<BayForgeUser | null>(null);
+  const [user, setUser] = useState<BayForgeSessionUser | null>(null);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {

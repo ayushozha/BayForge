@@ -2,9 +2,11 @@
   "name": "bayforge-landing",
   "version": "2.0.0",
   "private": true,
-  "description": "Bay Forge landing page with waitlist signup proxy, built with Next.js.",
+  "description": "Bay Forge marketing site and authenticated hackathon platform.",
   "scripts": {
     "dev": "next dev",
+    "typecheck": "tsc --noEmit",
+    "test": "tsc -p tsconfig.test.json && node --test .test-dist/tests/platform-policy.test.js",
     "build": "next build",
     "start": "next start"
   },

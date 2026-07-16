@@ -30,10 +30,21 @@ server-side — the `X-API-Key` and all tokens stay off the browser:
   `AUTH_COOKIE_DOMAIN`). `GET /api/auth/me` silently refreshes an expired
   access token. `GET /api/auth/oauth/<provider>` begins social login
   (`session_mode=token`) and hands the provider redirect to the browser.
+- `lib/server/session.ts` is the protected-platform data access boundary.
+  It validates the access token against the auth service before rendering,
+  redirects expired sessions through one server-side refresh, and returns a
+  minimal user DTO. The `bf_view` cookie stores only the active interface
+  preference; it never grants access. Workspace authorization always comes
+  from the trusted role claims returned by the auth service.
+- `app/(platform)/dashboard` contains the authenticated React workspace shell.
+  The route group keeps the public marketing pages server-first while the
+  signed-in platform can use focused client interactions such as navigation,
+  sign-out, and server-authorized role switching.
 - `app/auth/callback/route.ts` receives the one-time `auth_code` after a
   social login (the auth service redirects here via its per-client
   `settings.ui.oauth_redirect_url` override), exchanges it server-side at
-  `POST /api/auth/redirect/exchange`, sets the session cookies, and lands on `/`.
+  `POST /api/auth/redirect/exchange`, sets the session cookies, and lands on
+  `/dashboard`.
 - `/login` + `/signup` pages, `components/AuthForm.tsx` (email/password +
   GitHub/Google buttons), `components/AuthStatus.tsx` (header session state).
 
