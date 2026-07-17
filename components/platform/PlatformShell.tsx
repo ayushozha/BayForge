@@ -1,8 +1,8 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import BrandSymbol from "@/components/BrandSymbol";
+import { useEffect, useState, useTransition } from "react";
+import BayForgeLogo from "@/components/platform/BayForgeLogo";
 import { switchWorkspace } from "@/app/(platform)/dashboard/actions";
 import {
   getRoleLabel,
@@ -27,6 +27,22 @@ export default function PlatformShell({
   const displayName =
     user.display_name || user.name || user.email || "Bay Forge member";
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const previousOverflow = document.documentElement.style.overflow;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.documentElement.style.overflow = "hidden";
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [menuOpen]);
+
   function handleWorkspaceChange(view: RoleView) {
     if (view === user.active_view || isSwitching) return;
     setSwitchError("");
@@ -50,8 +66,7 @@ export default function PlatformShell({
     <div className="platform-frame">
       <header className="platform-mobile-header">
         <a className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
-          <BrandSymbol className="platform-brand-symbol" idPrefix="platform-mobile" />
-          <span>Bay Forge</span>
+          <BayForgeLogo compact />
         </a>
         <button
           className="platform-menu-button"
@@ -60,7 +75,9 @@ export default function PlatformShell({
           aria-controls="platform-sidebar"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          <span className="sr-only">Toggle navigation</span>
+          <span className="sr-only">
+            {menuOpen ? "Close navigation" : "Open navigation"}
+          </span>
           <span />
           <span />
         </button>
@@ -80,12 +97,9 @@ export default function PlatformShell({
         id="platform-sidebar"
       >
         <div className="platform-sidebar-top">
-          <a className="platform-brand" href="/dashboard">
-            <BrandSymbol className="platform-brand-symbol" idPrefix="platform-desktop" />
-            <span>
-              Bay Forge
-              <small>Submission platform</small>
-            </span>
+          <a className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
+            <BayForgeLogo />
+            <small>Submission platform</small>
           </a>
 
           <nav className="platform-nav" aria-label="Platform navigation">
@@ -94,6 +108,7 @@ export default function PlatformShell({
               className={pathname === "/dashboard" ? "is-active" : ""}
               href="/dashboard"
               aria-current={pathname === "/dashboard" ? "page" : undefined}
+              onClick={() => setMenuOpen(false)}
             >
               <OverviewIcon />
               Overview
@@ -153,7 +168,7 @@ export default function PlatformShell({
           <p>
             <span>Bay Builders Hackathon</span>
             <i aria-hidden="true">/</i>
-            Platform foundation
+            {getRoleLabel(user.active_view)} workspace
           </p>
           <span className="platform-session-badge">
             <i />

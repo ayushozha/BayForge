@@ -23,7 +23,7 @@ export default async function AccessDeniedPage({
 
   if (view && canAccessRoleView(user, view)) redirect("/dashboard");
 
-  const requestedLabel = view ? getRoleLabel(view) : "requested";
+  const requestedLabel = view ? getRoleLabel(view) : "That";
   return (
     <PlatformState
       eyebrow="Workspace restricted"
