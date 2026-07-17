@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 type PlatformStateProps = {
   eyebrow: string;
   title: string;
@@ -28,13 +30,13 @@ export default function PlatformState({
           <h1>{title}</h1>
           <p>{description}</p>
           <div className="platform-state-actions">
-            <a className="platform-button platform-button-primary" href={primaryHref}>
+            <Link className="platform-button platform-button-primary" href={primaryHref}>
               {primaryLabel}
-            </a>
+            </Link>
             {secondaryHref && secondaryLabel && (
-              <a className="platform-button platform-button-secondary" href={secondaryHref}>
+              <Link className="platform-button platform-button-secondary" href={secondaryHref}>
                 {secondaryLabel}
-              </a>
+              </Link>
             )}
           </div>
         </div>

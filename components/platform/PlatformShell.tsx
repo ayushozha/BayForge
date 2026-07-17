@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import BayForgeLogo from "@/components/platform/BayForgeLogo";
@@ -30,15 +31,15 @@ export default function PlatformShell({
   useEffect(() => {
     if (!menuOpen) return;
 
-    const previousOverflow = document.documentElement.style.overflow;
+    const previousOverflow = document.body.style.overflow;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setMenuOpen(false);
     };
 
-    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", closeOnEscape);
     return () => {
-      document.documentElement.style.overflow = previousOverflow;
+      document.body.style.overflow = previousOverflow;
       document.removeEventListener("keydown", closeOnEscape);
     };
   }, [menuOpen]);
@@ -65,9 +66,9 @@ export default function PlatformShell({
   return (
     <div className="platform-frame">
       <header className="platform-mobile-header">
-        <a className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
+        <Link className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
           <BayForgeLogo compact />
-        </a>
+        </Link>
         <button
           className="platform-menu-button"
           type="button"
@@ -97,14 +98,14 @@ export default function PlatformShell({
         id="platform-sidebar"
       >
         <div className="platform-sidebar-top">
-          <a className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
+          <Link className="platform-brand" href="/dashboard" aria-label="Bay Forge dashboard">
             <BayForgeLogo />
             <small>Submission platform</small>
-          </a>
+          </Link>
 
           <nav className="platform-nav" aria-label="Platform navigation">
             <p>Workspace</p>
-            <a
+            <Link
               className={pathname === "/dashboard" ? "is-active" : ""}
               href="/dashboard"
               aria-current={pathname === "/dashboard" ? "page" : undefined}
@@ -112,7 +113,7 @@ export default function PlatformShell({
             >
               <OverviewIcon />
               Overview
-            </a>
+            </Link>
           </nav>
 
           <div className="platform-workspace-switcher">
@@ -143,10 +144,10 @@ export default function PlatformShell({
         </div>
 
         <div className="platform-sidebar-bottom">
-          <a className="platform-event-link" href="/bay-builders-hackathon">
+          <Link className="platform-event-link" href="/bay-builders-hackathon">
             <span>Bay Builders Hackathon</span>
             <small>View public event</small>
-          </a>
+          </Link>
           <div className="platform-account">
             <div className="platform-avatar" aria-hidden="true">
               {initials(displayName)}

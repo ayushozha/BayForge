@@ -177,6 +177,7 @@
 .platform-workspace-switcher button:disabled { cursor: wait; opacity: 0.65; }
 .platform-workspace-switcher button small {
   background: var(--platform-gradient);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-size: 0.53rem;
@@ -364,6 +365,7 @@
 .platform-kicker {
   margin: 0 0 16px;
   background: var(--platform-gradient);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font-size: 0.59rem;
@@ -426,6 +428,7 @@
   position: relative;
   z-index: 1;
   background: var(--platform-gradient);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font: italic 400 2rem/1 var(--platform-serif), Georgia, serif;
@@ -574,6 +577,7 @@
 
 .platform-checklist li > span {
   background: var(--platform-gradient);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font: italic 400 0.82rem/1 var(--platform-serif), Georgia, serif;
@@ -647,6 +651,7 @@
 
 .platform-state-code {
   background: var(--platform-gradient);
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   font: italic 400 7.5rem/1 var(--platform-serif), Georgia, serif;

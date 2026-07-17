@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   getRoleLabel,
   type BayForgeSessionUser,
@@ -133,9 +134,9 @@ export default function WorkspaceOverview({
               <span key={role}>{getRoleLabel(role)}</span>
             ))}
           </div>
-          <a className="platform-button platform-button-secondary" href="/bay-builders-hackathon">
+          <Link className="platform-button platform-button-secondary" href="/bay-builders-hackathon">
             View event page
-          </a>
+          </Link>
         </aside>
       </section>
     </main>
