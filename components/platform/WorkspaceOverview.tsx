@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   getRoleLabel,
   type BayForgeSessionUser,
@@ -6,31 +7,35 @@ import {
 
 const WORKSPACE_COPY: Record<
   RoleView,
-  { kicker: string; title: string; description: string }
+  { kicker: string; title: string; accent: string; description: string }
 > = {
   admin: {
     kicker: "Platform control",
-    title: "A secure base for event operations.",
+    title: "Run the event.",
+    accent: "Protect every outcome.",
     description:
-      "Your verified admin identity can govern hackathon configuration, role assignments, judging operations, and result publication as those features ship.",
+      "Your verified admin workspace is the secure entry point for role-restricted event operations.",
   },
   organizer: {
     kicker: "Event operations",
-    title: "Your hackathon command surface starts here.",
+    title: "Keep the room moving.",
+    accent: "Keep every decision clear.",
     description:
-      "Your verified organizer identity is ready for event setup, submission oversight, judge coordination, and result controls.",
+      "Your verified organizer workspace keeps your event identity and authorized view explicit from the first screen.",
   },
   judge: {
     kicker: "Review workspace",
-    title: "A focused home for fair project review.",
+    title: "Review the work.",
+    accent: "Score what matters.",
     description:
-      "Your invite-only judge identity is ready for assigned queues, rubric scoring, conflict safeguards, and final submission.",
+      "Your invite-only judge workspace confirms review access before any assignment or scoring data is shown.",
   },
   participant: {
     kicker: "Builder workspace",
-    title: "Your submission journey starts here.",
+    title: "Build with clarity.",
+    accent: "Submit with confidence.",
     description:
-      "Your participant identity is ready for team details, project drafts, required links, final submission, and status tracking.",
+      "Your participant workspace confirms ownership before any private team or submission data is shown.",
   },
 };
 
@@ -49,13 +54,15 @@ export default function WorkspaceOverview({
         <div>
           <p className="platform-kicker">{content.kicker}</p>
           <h1>
-            Welcome, {firstName(displayName)}.
-            <em>{content.title}</em>
+            {content.title}
+            <em>{content.accent}</em>
           </h1>
-          <p>{content.description}</p>
+          <p>
+            Welcome back, <strong>{firstName(displayName)}</strong>. {content.description}
+          </p>
         </div>
         <div className="platform-hero-mark" aria-hidden="true">
-          <span>BF</span>
+          <span>B<span>/</span>F</span>
         </div>
       </section>
 
@@ -81,44 +88,43 @@ export default function WorkspaceOverview({
         <article className="platform-card platform-card-featured">
           <div className="platform-card-heading">
             <div>
-              <p className="platform-kicker">Foundation status</p>
-              <h2>Identity and access are ready.</h2>
+              <p className="platform-kicker">Workspace readiness</p>
+              <h2>Your access is active and verified.</h2>
             </div>
-            <span className="platform-status"><i /> Active</span>
+            <span className="platform-status"><i /> Ready</span>
           </div>
           <p>
-            This first platform release establishes the authenticated shell,
-            trusted role policy, secure workspace switching, and resilient
-            session handling. Submission data is intentionally not fabricated
-            before the submission feature is connected.
+            Bay Forge has verified the identity and role policy behind this
+            workspace. Event workflows will use this same secure boundary, so
+            every action is attributed to the right person and role.
           </p>
           <ol className="platform-checklist">
             <li>
               <span>01</span>
               <div>
-                <strong>Authenticated server boundary</strong>
-                <small>Protected pages verify the session before rendering.</small>
+                <strong>Identity confirmed</strong>
+                <small>Protected pages verify your session before they render.</small>
               </div>
             </li>
             <li>
               <span>02</span>
               <div>
-                <strong>Role-aware workspaces</strong>
-                <small>Only roles returned by the auth service can be opened.</small>
+                <strong>Workspace policy applied</strong>
+                <small>Only roles returned by the authentication service can be opened.</small>
               </div>
             </li>
             <li>
               <span>03</span>
               <div>
-                <strong>Submission-ready architecture</strong>
-                <small>The next feature can attach real event and project data here.</small>
+                <strong>Operating context visible</strong>
+                <small>Your selected role and public event stay visible throughout the workspace.</small>
               </div>
             </li>
           </ol>
         </article>
 
         <aside className="platform-card platform-access-card">
-          <p className="platform-kicker">Access profile</p>
+          <p className="platform-kicker">Signed-in profile</p>
           <h2>{user.role_label}</h2>
           <p>
             Signed in as <strong>{user.email || displayName}</strong>
@@ -128,9 +134,9 @@ export default function WorkspaceOverview({
               <span key={role}>{getRoleLabel(role)}</span>
             ))}
           </div>
-          <a className="platform-button platform-button-secondary" href="/bay-builders-hackathon">
-            View hackathon
-          </a>
+          <Link className="platform-button platform-button-secondary" href="/bay-builders-hackathon">
+            View event page
+          </Link>
         </aside>
       </section>
     </main>

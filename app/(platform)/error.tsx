@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function PlatformError({
   reset,
 }: {
@@ -19,9 +21,9 @@ export default function PlatformError({
           <button className="platform-button platform-button-primary" onClick={reset}>
             Try again
           </button>
-          <a className="platform-button platform-button-secondary" href="/">
+          <Link className="platform-button platform-button-secondary" href="/">
             Return home
-          </a>
+          </Link>
         </div>
       </section>
     </main>
